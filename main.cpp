@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
    
    std::cout << "\n\nMain: game init attempt..\n";
 
-   if(TheGame::Instance()->init("Chapter 1", 100, 100, 640, 480, true)) {
+   if(TheGame::Instance()->init("2D RigidBody Physics Engine", 100, 100, 800, 600, true)) {
    std::cout << "Main: game init successful\n";
 
    while (TheGame::Instance()->running())

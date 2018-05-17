@@ -49,13 +49,13 @@ void TextureManager::draw(std::string id, int x, int y, int width, int height, S
 // create a source rectangle to use appropriate frame of animation using currentFrame and currentRow variables
 // source rect's x pos for the frame is the width of the source rect multipled by current frame
 // source rect's y pos is the height of the rectangle multipled by currentRow-1
-void TextureManager::drawFrame(std::string id, int x, int y, int width, int height, int currentRow, int currentFrame, SDL_Renderer* pRenderer, SDL_RendererFlip flip) {
+void TextureManager::drawFrame(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip) {
   
   SDL_Rect srcRect;
   SDL_Rect destRect;
   //std::cout << currentFrame<< std::endl;
-  srcRect.x = width * currentFrame;
-  srcRect.y = height * (currentRow - 1);
+  srcRect.x = width;
+  srcRect.y = height;
   srcRect.w = destRect.w = width;
   srcRect.h = destRect.h = height;
   destRect.x = x;

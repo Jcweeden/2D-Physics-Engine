@@ -12,39 +12,41 @@ class ShapeBody : public GameObject {
 
 public:
 
-  ShapeBody(const LoaderParams* pParams);
+  ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_density, Uint32 p_colour);
 
   virtual void draw();
   virtual void update();
   virtual void clean();
-
-  int getWidth() { return width; }
-  int getHeight() { return height; }
-
-
+  
   Vector2D& getPosition() {return position; } 
   int getPositionX() {return position.getX(); }
   int getPositionY() {return position.getY(); }
 
   float& getRotation() {return rotation; }
+  float& getRotationalVelocity() { return rotationalVelocity; }
 
+  float getArea() {}
+  float getMass() { area * density; }
+  
 protected:
 
-  //virtual ~GameObject() {}
-
   Vector2D position;
-  Vector2D velocity;
-  Vector2D acceleration;
   float rotation;
 
+  //x,y diff from first coordinate to the center of mass
+  //Vector2D centerOfMass;
+  void calculateCenterOfMass();
+
+  float area; //calulated in child constructor
+  float density; //mass
   
-  int width;
-  int height;
+  Vector2D velocity;
+  float rotationalVelocity;
 
-  int currentRow;
-  int currentFrame;
+  
+  Vector2D acceleration; //
 
-  std::string textureID;
+  Uint32 colour;
   
 };
 

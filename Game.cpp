@@ -1,5 +1,7 @@
 #include "Game.h"
 #include <iostream>
+#include "Polygon.h"
+#include "Circle.h"
 
 
 //define static instance
@@ -65,23 +67,17 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 //create and load objects
 void Game::LoadObjects() {
 
-  //create
-  // m_go = new GameObject();
-  // m_player = new Player();
-  // m_enemy = new Enemy();
+  std::vector<Sint16>  polygonTestX{0, 100, 100, 0};
+  std::vector<Sint16>  polygonTestY{0, 0, 100, 100};
+  
+  Polygon* m_polygonTest = new Polygon(150,150, 1, 0xff00ffcc, polygonTestX, polygonTestY);
 
-  // //load
-  // m_go->load(100, 100, 128, 82, "animate");
-  // m_player->load(300, 300, 128, 82, "animate");
-  // m_enemy->load(0,0,128,82,"animate");
-
-  // //add to GameObject* vector
-  // m_gameObjects.push_back(m_go);
-  // m_gameObjects.push_back(m_player);
-  // m_gameObjects.push_back(m_enemy);
+  m_gameObjects.push_back(m_polygonTest);
 
 
-  //m_gameObjects.push_back(new Enemy(new LoaderParams(300,300,128,82,"animate")));
+  Circle* m_circleTest = new Circle(450,450, 20, 1, 0xffffffcc);
+
+  m_gameObjects.push_back(m_circleTest);
 }
 
 //put textures in memory
@@ -91,13 +87,14 @@ void Game::LoadObjects() {
 
 void Game::render()
 {
+  SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 0xFF); 
   SDL_RenderClear(m_pRenderer); // clear the renderer to the draw colour
 
   //loop through objects and draw them
-  // for(size_t i = 0; i < m_gameObjects.size(); i++)
-  // {
-  //   m_gameObjects[i]->draw(/*m_pRenderer*/);
-  // }
+  for(size_t i = 0; i < m_gameObjects.size(); i++)
+  {
+    m_gameObjects[i]->draw(/*m_pRenderer*/);
+  }
   
   SDL_RenderPresent(m_pRenderer);  //draw to the screen
 }
@@ -105,10 +102,10 @@ void Game::render()
 void Game::update() {
 
   //loop through and update our objects
-  // for(size_t i = 0; i < m_gameObjects.size(); i++)
-  // {
-  //   m_gameObjects[i]->update();
-  // }
+  for(size_t i = 0; i < m_gameObjects.size(); i++)
+  {
+    m_gameObjects[i]->update();
+  }
 
 }
 
@@ -117,6 +114,12 @@ void Game::clean() {
 
   TheInputHandler::Instance()->clean();//remove any controller connections
 
+  // for(size_t i = 0; i < m_gameObjects.size(); i++)
+  // {
+  //   delete m_gameObjects[i];
+  // }
+
+  m_gameObjects.clear();
   
   SDL_DestroyWindow (m_pWindow);
   SDL_DestroyRenderer (m_pRenderer);
