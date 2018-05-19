@@ -12,7 +12,7 @@
 class Polygon : public ShapeBody {
 public:
 
-  Polygon(int p_x, int p_y,/* int p_rotation, int p_width, int p_height,*/ int p_density, Uint32 p_colour, std::vector<Sint16> verticesX, std::vector<Sint16> verticesY );
+  Polygon(int p_x, int p_y,/* int p_rotation,*/ int p_mass, std::vector<Sint16> verticesX, std::vector<Sint16> verticesY, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA );
   
   virtual void draw();
   virtual void update();

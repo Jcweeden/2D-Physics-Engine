@@ -3,8 +3,8 @@
 #include "SDL2/SDL2_gfxPrimitives.h" 
 
 
-Polygon::Polygon(int p_x, int p_y,/* int p_rotation,*/ int p_density, Uint32 p_colour, std::vector<Sint16> p_verticesX, std::vector<Sint16> p_verticesY ) :
-    ShapeBody( p_x,  p_y,  /*p_rotation,*/  p_density, p_colour), verticesX(p_verticesX), verticesY(p_verticesY)
+Polygon::Polygon(int p_x, int p_y,/* int p_rotation,*/ int p_mass, std::vector<Sint16> p_verticesX, std::vector<Sint16> p_verticesY, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA ) :
+    ShapeBody( p_x,  p_y,  /*p_rotation,*/  p_mass, p_colourR,p_colourG,p_colourB,p_colourA), verticesX(p_verticesX), verticesY(p_verticesY)
 {
   //init other variables
 
@@ -49,7 +49,7 @@ void Polygon::draw()
     vertPosY.push_back(verticesY[i]+getPositionY());
   }
   
-  filledPolygonColor (TheGame::Instance()->getRenderer(), &vertPosX[0], &vertPosY[0], getVertexCount(), colour);	
+  filledPolygonRGBA (TheGame::Instance()->getRenderer(), &vertPosX[0], &vertPosY[0], getVertexCount(), colourR, colourG, colourB, colourA);	
   
   //circleColor(TheGame::Instance()->getRenderer(), 600, 450, 33, 0xff00ff00);
   //filledCircleColor(TheGame::Instance()->getRenderer(), 300, 450, 30, 0xff00ffcc); 

@@ -12,7 +12,7 @@ class ShapeBody : public GameObject {
 
 public:
 
-  ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_density, Uint32 p_colour);
+  ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA);
 
   virtual void draw();
   virtual void update();
@@ -26,11 +26,33 @@ public:
   float& getRotationalVelocity() { return rotationalVelocity; }
 
   float getArea() {}
-  float getMass() { area * density; }
+
+  virtual void setVelocity(float p_x, float p_y) { velocity.setX(p_x); velocity.setY(p_y); }
+  virtual void setAcceleration(float p_x, float p_y) { acceleration.setX(p_x); acceleration.setY(p_y); }
+  
+  virtual void setDamping(float val) { damping = val; }
+  virtual float getDamping() { return damping; }
+
+  virtual void setMass(const float mass); //sets inverse mass
+  virtual float getMass() { return inverseMass; }
   
 protected:
 
   Vector2D position;
+  Vector2D velocity;
+  Vector2D acceleration;
+
+  Vector2D forceAccumulated; //holds force to be applied at the next iteration. cleared after each iteration
+  void clearAccumForces();
+  
+  float damping;
+
+
+  float inverseMass;
+ 
+
+
+  
   float rotation;
 
   //x,y diff from first coordinate to the center of mass
@@ -38,15 +60,19 @@ protected:
   void calculateCenterOfMass();
 
   float area; //calulated in child constructor
-  float density; //mass
+  //float density; //mass
+
+
   
-  Vector2D velocity;
   float rotationalVelocity;
 
   
-  Vector2D acceleration; //
 
-  Uint32 colour;
+  Uint32 colourR, colourG, colourB, colourA;
+
+
+
+
   
 };
 

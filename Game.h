@@ -54,6 +54,11 @@ public:
   //function to return the renderer
   SDL_Renderer* getRenderer() const { return m_pRenderer; }
 
+  int getWidth() { return windowWidth; }
+  int getHeight() { return windowHeight; }
+
+  Uint32 getFrameTime();
+  void setFrameTime(Uint32 val);
   
 private:
 
@@ -61,11 +66,16 @@ private:
 
   //static instance variable
   static Game* s_pInstance;
+
+  Uint32 frameTime;
+
   
   SDL_Window* m_pWindow;
   SDL_Renderer* m_pRenderer;
 
 
+  int windowWidth;
+  int windowHeight;
   
   //TextureManager m_textureManager;
     
