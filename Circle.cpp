@@ -20,9 +20,6 @@ float Circle::getArea() {
 void Circle::draw()
 {  
   filledCircleRGBA(TheGame::Instance()->getRenderer(), getPositionX(), getPositionY(), radius, colourR, colourG, colourB, colourA);
-  //filledCircleColor(TheGame::Instance()->getRenderer(), 300, 450, 30, 0xff00ffcc); 
-
-  //SDL_Delay(3000);
 }
 
 void Circle::update()

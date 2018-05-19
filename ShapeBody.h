@@ -3,7 +3,6 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "GameObject.h"
-#include "TextureManager.h"
 #include "Vector2D.h"
 #include <iostream>
 #include <string>
@@ -27,7 +26,9 @@ public:
 
   float getArea() {}
 
+  virtual Vector2D getVelocity() { return velocity; }
   virtual void setVelocity(float p_x, float p_y) { velocity.setX(p_x); velocity.setY(p_y); }
+
   virtual void setAcceleration(float p_x, float p_y) { acceleration.setX(p_x); acceleration.setY(p_y); }
   
   virtual void setDamping(float val) { damping = val; }
@@ -35,6 +36,8 @@ public:
 
   virtual void setMass(const float mass); //sets inverse mass
   virtual float getMass() { return inverseMass; }
+
+  void addForce(Vector2D &force);
   
 protected:
 
@@ -42,11 +45,11 @@ protected:
   Vector2D velocity;
   Vector2D acceleration;
 
-  Vector2D forceAccumulated; //holds force to be applied at the next iteration. cleared after each iteration
+  Vector2D forceAccumulated; //sum of all forces to be applied in a frame. cleared after each update
   void clearAccumForces();
+
   
   float damping;
-
 
   float inverseMass;
  

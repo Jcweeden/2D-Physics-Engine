@@ -109,9 +109,13 @@ void Game::LoadObjects() {
   
   m_gameObjects.push_back(m_polygonTest1);
 
-  //Circle* m_circleTest = new Circle(450,450, 20, 1, 0xffffffcc);
-
-  //m_gameObjects.push_back(m_circleTest);
+  Circle* m_circleTest = new Circle(150,50, 20, 1, 0,0,255,255);
+  m_circleTest->setMass(1.0f);
+  m_circleTest->setVelocity(10.0f, 0.0f);
+  m_circleTest->setAcceleration(0.0f, 0.1f);
+  m_circleTest->setDamping(0.99f);
+  
+  m_gameObjects.push_back(m_circleTest);
 }
 
 //put textures in memory

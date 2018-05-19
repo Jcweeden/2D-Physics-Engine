@@ -24,7 +24,7 @@ void ShapeBody::setMass(const float mass)
 void ShapeBody::draw() {}
 
 
-void ShapeBody::update(){
+void ShapeBody::update(){ //integrate
 
   //ensure has mass
   if (inverseMass <= 0.0f)
@@ -64,6 +64,11 @@ void ShapeBody::update(){
 
 };
 
+//adds force to the vector that will be applied at the end of each frame
+void ShapeBody::addForce(Vector2D &force)
+{
+  forceAccumulated += force;
+}
 
 void ShapeBody::clearAccumForces()
 {
