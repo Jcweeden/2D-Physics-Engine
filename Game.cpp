@@ -79,8 +79,8 @@ void Game::setFrameTime(Uint32 val) { frameTime = val; }
 //create and load objects
 void Game::LoadObjects() {
 
-  const Vector2D grav (0.0f,0.1f);
-  
+  const Vector2D grav (0.0f,1.0f);
+  /*
   std::vector<Sint16>  polygonTestX{0, 20, 20, 0};
   std::vector<Sint16>  polygonTestY{0, 0, 20, 20};
   
@@ -94,12 +94,13 @@ void Game::LoadObjects() {
 
   ShapeGravity* sg1 = new ShapeGravity(grav);
   registry.add(m_polygonTest, sg1);
-
+  
   ShapeAnchoredSpring* sasA1 = new ShapeAnchoredSpring(new Vector2D(200,100), 0.5f, 100.0f);
   registry.add(m_polygonTest, sasA1);
+  */
   
   Circle* m_circleTest = new Circle(400,400, 20, 1, 0,0,255,255);
-  m_circleTest->setMass(3.0f);
+  m_circleTest->setMass(1.0f);
   m_circleTest->setVelocity(0.0f, 0.0f);
   m_circleTest->setAcceleration(0.0f, 0.0f); //grav set in forceGen
   m_circleTest->setDamping(0.95f);
@@ -109,9 +110,13 @@ void Game::LoadObjects() {
   ShapeGravity* sg = new ShapeGravity(grav);
   registry.add(m_circleTest, sg);
 
+  ShapeBuoyancy* sb1 = new ShapeBuoyancy(20, 10, 300, 0.2);
+  registry.add(m_circleTest, sb1);
+  
+  /*
   ShapeAnchoredSpring* sasA = new ShapeAnchoredSpring(new Vector2D(400,100), 0.5f, 100.0f);
   registry.add(m_circleTest, sasA);
-
+  */
   
   //basic spring
   //ShapeSpring* ssA = new ShapeSpring(m_circleTest, 0.5f, 100.0f);
@@ -139,8 +144,13 @@ void Game::render()
     m_gameObjects[i]->draw(/*m_pRenderer*/);
   }
 
-    aalineRGBA(m_pRenderer, 210,100, m_gameObjects[0]->getPositionX()+10, m_gameObjects[0]->getPositionY(), 0,0,255,255);
-  aalineRGBA(m_pRenderer, 400,100, m_gameObjects[1]->getPositionX(), m_gameObjects[1]->getPositionY(), 255,0,0,255);
+  //water line
+  aalineRGBA(m_pRenderer, 0,300, 800,300, 0,0,255,255);
+
+
+  //string for springs
+  //aalineRGBA(m_pRenderer, 210,100, m_gameObjects[0]->getPositionX()+10, m_gameObjects[0]->getPositionY(), 0,0,255,255);
+  //aalineRGBA(m_pRenderer, 400,100, m_gameObjects[1]->getPositionX(), m_gameObjects[1]->getPositionY(), 255,0,0,255);
   
   SDL_RenderPresent(m_pRenderer);  //draw to the screen
 }

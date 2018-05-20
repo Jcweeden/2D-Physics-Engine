@@ -65,7 +65,7 @@ class ShapeDrag: public ForceGenerator
 public:
   ShapeDrag(float k1, float k2); //constr
   virtual void printForceGenType() { std::cout << "ForceGen type : drag\n"; }
-  virtual void updateForce(ShapeBody *shape, float duration);
+  virtual void updateForce(ShapeBody* shape, float duration);
 };
 
 
@@ -79,7 +79,7 @@ class ShapeSpring: public ForceGenerator
 public:
   ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength);
   virtual void printForceGenType() { std::cout << "ForceGen type : basicSpring\n"; }
-  virtual void updateForce(ShapeBody *particle, float duration);
+  virtual void updateForce(ShapeBody* shape, float duration);
 };
 
 
@@ -93,7 +93,34 @@ class ShapeAnchoredSpring: public ForceGenerator
 public:
   ShapeAnchoredSpring(Vector2D *p_anchor, float p_springConstant, float p_restLength);
   virtual void printForceGenType() { std::cout << "ForceGen type : anchoredSpring\n"; }
-  virtual void updateForce(ShapeBody *particle, float duration);
+  virtual void updateForce(ShapeBody* shape, float duration);
+};
+
+class ShapeBungee: public ForceGenerator
+{
+  ShapeBody *endOfBungeeObj;
+
+  float springConstant;
+  float restLength;
+
+public:
+  ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength);
+  virtual void printForceGenType() { std::cout << "ForceGen type : bungee\n"; }
+  virtual void updateForce(ShapeBody* shape, float duration);
+};
+
+
+class ShapeBuoyancy: public ForceGenerator
+{
+  float depthForMaxBuoyancyForce; //when submerged at this depth the shape will generate max buoyancy force
+  float shapeVolume;
+  float waterHeight; //height of water, below which obj will be submerged
+  float waterDensity; //set at standard of pure water - 1000kg per cubic meter
+
+public:
+  ShapeBuoyancy(float p_depthForMaxBuoyancyForce, float p_shapeVolume, float p_waterHeight, float p_waterDensity = 1000.0f);
+  virtual void printForceGenType() { std::cout << "ForceGen type : buoyancy\n"; }
+  virtual void updateForce(ShapeBody* shape, float duration);
 };
 
 #endif
