@@ -29,27 +29,40 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
   {
     return Vector2D(m_x + v2.m_x, m_y + v2.m_y);
   }
-
+  
+  void operator+=(const Vector2D& v)
+  {
+    m_x += v.m_x;
+    m_y += v.m_y;
+  }
+  
+/*
   friend Vector2D& operator+=(Vector2D& v1, const Vector2D v2)
   {
     v1.m_x += v2.m_x;
     v1.m_y += v2.m_y;
 
     return v1;
-  }
+  }*/
   
   //subtraction of vectors
   Vector2D operator-(const Vector2D& v2) {
     return Vector2D(m_x - v2.m_x, m_y - v2.m_y);
   }
 
-  friend Vector2D& operator-=(Vector2D v1, const Vector2D v2) {
+  void operator-=(const Vector2D& v)
+  {
+    m_x -= v.m_x;
+    m_y -= v.m_y;
+  }
+  
+  /*friend Vector2D& operator-=(Vector2D v1, const Vector2D v2) {
 
     v1.m_x -= v2.m_x;
     v1.m_y -= v2.m_y;
     
     return v1;
-  }
+    }*/
   
   //dot product - scalar product (a . b)
   Vector2D operator*(float val) {

@@ -13,8 +13,13 @@ public:
   virtual void draw() = 0;
   virtual void update() = 0;
   virtual void clean() = 0;
+
+
   
   virtual Vector2D& getPosition() = 0;
+  virtual int getPositionX() = 0;
+  virtual int getPositionY() = 0;
+  
   virtual float& getRotation() = 0;
   
 protected:

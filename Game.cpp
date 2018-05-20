@@ -2,21 +2,13 @@
 #include <iostream>
 #include "Polygon.h"
 #include "Circle.h"
+#include "ForceGenerator.h"
+#include "SDL2/SDL2_gfxPrimitives.h" 
 
-
-enum COLOURS
-{
-  RED = 0x000000FF,
-  GREEN = 0x00ff00cc,
-  BLUE = 0x0000ffcc, //does not work
-  WHITE = 0xffffffcc,
-  YELLOW = 0xffff00cc, //purple
-  PURPLE = 0xff00ffcc,
-  CYAN = 0x00ffffcc
-};
 
 //define static instance
 Game* Game::s_pInstance = 0;
+  ForceRegistry registry;
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -87,35 +79,48 @@ void Game::setFrameTime(Uint32 val) { frameTime = val; }
 //create and load objects
 void Game::LoadObjects() {
 
+  const Vector2D grav (0.0f,0.1f);
+  
   std::vector<Sint16>  polygonTestX{0, 20, 20, 0};
   std::vector<Sint16>  polygonTestY{0, 0, 20, 20};
   
-  Polygon* m_polygonTest = new Polygon(150,50, 1, polygonTestX, polygonTestY, 255,0,0,255);
+  Polygon* m_polygonTest = new Polygon(200,400, 1, polygonTestX, polygonTestY, 255,0,0,255);
   m_polygonTest->setMass(1.0f);
-  m_polygonTest->setVelocity(15.0f, 0.0f);
-  m_polygonTest->setAcceleration(0.0f, 0.1f);
-  m_polygonTest->setDamping(0.99f);
-
+  m_polygonTest->setVelocity(0.0f, 0.0f);
+  m_polygonTest->setAcceleration(0.0f, 0.0f);
+  m_polygonTest->setDamping(0.95f);
   
   m_gameObjects.push_back(m_polygonTest);
 
-  
-  Polygon* m_polygonTest1 = new Polygon(150,50, 1, polygonTestX, polygonTestY, 0,255,0,255);
-  m_polygonTest1->setMass(1.0f);
-  m_polygonTest1->setVelocity(15.0f, 0.0f);
-  m_polygonTest1->setAcceleration(0.0f, 0.1f);
-  m_polygonTest1->setDamping(0.97f);
-  
-  
-  m_gameObjects.push_back(m_polygonTest1);
+  ShapeGravity* sg1 = new ShapeGravity(grav);
+  registry.add(m_polygonTest, sg1);
 
-  Circle* m_circleTest = new Circle(150,50, 20, 1, 0,0,255,255);
-  m_circleTest->setMass(1.0f);
-  m_circleTest->setVelocity(10.0f, 0.0f);
-  m_circleTest->setAcceleration(0.0f, 0.1f);
-  m_circleTest->setDamping(0.99f);
+  ShapeAnchoredSpring* sasA1 = new ShapeAnchoredSpring(new Vector2D(200,100), 0.5f, 100.0f);
+  registry.add(m_polygonTest, sasA1);
+  
+  Circle* m_circleTest = new Circle(400,400, 20, 1, 0,0,255,255);
+  m_circleTest->setMass(3.0f);
+  m_circleTest->setVelocity(0.0f, 0.0f);
+  m_circleTest->setAcceleration(0.0f, 0.0f); //grav set in forceGen
+  m_circleTest->setDamping(0.95f);
   
   m_gameObjects.push_back(m_circleTest);
+
+  ShapeGravity* sg = new ShapeGravity(grav);
+  registry.add(m_circleTest, sg);
+
+  ShapeAnchoredSpring* sasA = new ShapeAnchoredSpring(new Vector2D(400,100), 0.5f, 100.0f);
+  registry.add(m_circleTest, sasA);
+
+  
+  //basic spring
+  //ShapeSpring* ssA = new ShapeSpring(m_circleTest, 0.5f, 100.0f);
+  //registry.add(m_polygonTest, ssA);
+
+  //ShapeSpring* ssB = new ShapeSpring(m_polygonTest, 0.5f, 100.0f);
+  //registry.add(m_circleTest, ssB);
+
+
 }
 
 //put textures in memory
@@ -133,6 +138,9 @@ void Game::render()
   {
     m_gameObjects[i]->draw(/*m_pRenderer*/);
   }
+
+    aalineRGBA(m_pRenderer, 210,100, m_gameObjects[0]->getPositionX()+10, m_gameObjects[0]->getPositionY(), 0,0,255,255);
+  aalineRGBA(m_pRenderer, 400,100, m_gameObjects[1]->getPositionX(), m_gameObjects[1]->getPositionY(), 255,0,0,255);
   
   SDL_RenderPresent(m_pRenderer);  //draw to the screen
 }
@@ -144,7 +152,7 @@ void Game::update() {
   {
     m_gameObjects[i]->update();
   }
-
+  registry.updateForces(getFrameTime());
 }
 
 void Game::clean() {

@@ -4,7 +4,7 @@
 #include "Vector2D.h"
 #include <iostream>
 #include <string>
-
+#include <iostream>
 
 //applies a single force to an object
 class ForceGenerator {
@@ -12,7 +12,7 @@ class ForceGenerator {
 public:
 
   virtual void updateForce(ShapeBody *shape, float duration) = 0;
-
+  virtual void printForceGenType() = 0;
 };
 
 //keeps a vector holding all of the forces being applied to an object
@@ -52,6 +52,7 @@ class ShapeGravity: public ForceGenerator
 public:
   ShapeGravity(const Vector2D &gravity); //constr
 
+  virtual void printForceGenType() { std::cout << "ForceGen type : gravity\n";}
   virtual void updateForce(ShapeBody* shape, float durations);
 };
 
@@ -63,7 +64,35 @@ class ShapeDrag: public ForceGenerator
 
 public:
   ShapeDrag(float k1, float k2); //constr
+  virtual void printForceGenType() { std::cout << "ForceGen type : drag\n"; }
+  virtual void updateForce(ShapeBody *shape, float duration);
+};
 
+
+class ShapeSpring: public ForceGenerator
+{
+  ShapeBody *endOfSpringObj;
+
+  float springConstant;
+  float restLength;
+
+public:
+  ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength);
+  virtual void printForceGenType() { std::cout << "ForceGen type : basicSpring\n"; }
+  virtual void updateForce(ShapeBody *particle, float duration);
+};
+
+
+class ShapeAnchoredSpring: public ForceGenerator
+{
+  Vector2D *anchor;
+
+  float springConstant;
+  float restLength;
+
+public:
+  ShapeAnchoredSpring(Vector2D *p_anchor, float p_springConstant, float p_restLength);
+  virtual void printForceGenType() { std::cout << "ForceGen type : anchoredSpring\n"; }
   virtual void updateForce(ShapeBody *particle, float duration);
 };
 

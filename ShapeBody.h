@@ -35,8 +35,10 @@ public:
   virtual float getDamping() { return damping; }
 
   virtual void setMass(const float mass); //sets inverse mass
-  virtual float getMass() { return inverseMass; }
+  virtual float getMass() { return ((float)1.0f)/inverseMass; }
+  virtual bool hasFiniteMass() { return inverseMass >= 0.0f; }
 
+  
   void addForce(Vector2D &force);
   
 protected:

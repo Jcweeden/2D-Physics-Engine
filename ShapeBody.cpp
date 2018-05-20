@@ -11,13 +11,13 @@ ShapeBody::ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_c
 
 void ShapeBody::setMass(const float mass)
 {
-  if(mass <= 0)
+  if(mass == 0)
   {
-    std::cout << "ShapeBody.cpp.setMass() - requires mass to above 0\n";
+    std::cout << "ShapeBody.cpp.setMass() - requires mass not of 0\n";
     return;
   } else
   {
-    inverseMass = ((float)1.0)/mass;
+    inverseMass = ((float)1.0f)/mass;
   }
 }
 
@@ -40,7 +40,7 @@ void ShapeBody::update(){ //integrate
     return;
   } else
   {
-    std::cout << "ShapeBody.cpp.Integration() - duration: " << duration  << "\n";
+    //std::cout << "ShapeBody.cpp.Integration() - duration: " << duration  << "\n";
     }
 
   
@@ -59,8 +59,8 @@ void ShapeBody::update(){ //integrate
   
   clearAccumForces();
 
-  std::cout << "Velocity x: " << velocity.getX() << " y: " << velocity.getY() << "\n";
-  std::cout << "Acceleration x: " << acceleration.getX() << " y: " << acceleration.getY() << "\n\n";
+  //std::cout << "Velocity x: " << velocity.getX() << " y: " << velocity.getY() << "\n";
+  //std::cout << "Acceleration x: " << acceleration.getX() << " y: " << acceleration.getY() << "\n\n";
 
 };
 
