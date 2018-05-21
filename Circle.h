@@ -28,6 +28,8 @@ public:
   const float pi = 3.14159265359;
   
 protected:
+
+  void checkIfHeldByMouse();
   
   float radius;
   

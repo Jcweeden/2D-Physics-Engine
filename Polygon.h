@@ -29,8 +29,11 @@ protected:
   std::vector<Sint16> verticesX; //stored in clockwise order
   std::vector<Sint16> verticesY; //stored in clockwise order
 
+  void checkIfHeldByMouse();
+  
   void calculateCenterOfMass();
-
+  void findMinMaxXY();
+  int minX, maxX, minY, maxY;
 };
 
 #endif

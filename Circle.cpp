@@ -24,7 +24,57 @@ void Circle::draw()
 
 void Circle::update()
 {
+  checkIfHeldByMouse();
+  
   ShapeBody::update();
+}
+
+void Circle::checkIfHeldByMouse()
+{
+ //CHECK IF HELD BY POINTER
+  Vector2D* pMousePos = TheInputHandler::Instance()->getMousePosition();
+
+  //HOLDING OBJECT
+  if (isHeldByMouse) //if held by mouse
+  {
+    if (TheInputHandler::Instance()->getIsMouseButtonPressed())
+    {
+      setVelocity(0.0f,0.0f); //reset velocity
+      isHeldByMouse = false;
+      arePhysicsEnabled = true;
+      TheInputHandler::Instance()->setIsHoldingObject(false);
+      TheInputHandler::Instance()->setIsMouseButtonPressed(false);  //prevent other objects being picked up in same frame    
+    } else
+    {
+      //move shape to mouse pointer
+      setPositionX(pMousePos->getX() - offsetFromMouseX);
+      setPositionY(pMousePos->getY() - offsetFromMouseY);
+    }
+  }
+  //if not already holding an object
+  else if (!TheInputHandler::Instance()->getIsHoldingObject())
+  { //and if pointer is over object
+    if (pMousePos->getX() < (position.getX() + radius) &&
+        pMousePos->getX() > (position.getX() - radius) &&
+        pMousePos->getY() > (position.getY() - radius) &&
+        pMousePos->getY() < (position.getY() + radius)
+        )
+    {
+      //if pointer is clicked - grab hold of the object
+      if (TheInputHandler::Instance()->getIsMouseButtonPressed())   
+      {
+        setVelocity(0.0f,0.0f); //reset Velocity
+        TheInputHandler::Instance()->setIsHoldingObject(true);
+        TheInputHandler::Instance()->setIsMouseButtonPressed(false);      
+        isHeldByMouse = true;
+        arePhysicsEnabled = false;
+        
+        //calculate offset from mouse pos to object
+        offsetFromMouseX = pMousePos->getX() - getPositionX();
+        offsetFromMouseY = pMousePos->getY() - getPositionY();
+      }
+    }
+  }
 }
 
 void Circle::clean() {}

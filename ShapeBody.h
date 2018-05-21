@@ -4,6 +4,7 @@
 #include "SDL2/SDL_image.h"
 #include "GameObject.h"
 #include "Vector2D.h"
+#include "InputHandler.h"
 #include <iostream>
 #include <string>
 
@@ -16,7 +17,12 @@ public:
   virtual void draw();
   virtual void update();
   virtual void clean();
-  
+
+  void setPhysicsEnabled(bool val) { arePhysicsEnabled = val; }
+
+
+  void setPositionX(int val) {position.setX(val); }
+  void setPositionY(int val) {position.setY(val); }
   Vector2D& getPosition() {return position; } 
   int getPositionX() {return position.getX(); }
   int getPositionY() {return position.getY(); }
@@ -43,6 +49,13 @@ public:
   
 protected:
 
+  void physicsIntegration();
+  
+  bool arePhysicsEnabled;
+  bool isHeldByMouse;
+  //bool mouseReleased; //set to true upon initial click
+  int offsetFromMouseX, offsetFromMouseY;
+  
   Vector2D position;
   Vector2D velocity;
   Vector2D acceleration;
@@ -52,11 +65,7 @@ protected:
 
   
   float damping;
-
   float inverseMass;
- 
-
-
   
   float rotation;
 
@@ -65,20 +74,11 @@ protected:
   void calculateCenterOfMass();
 
   float area; //calulated in child constructor
-  //float density; //mass
 
-
-  
   float rotationalVelocity;
-
   
 
   Uint32 colourR, colourG, colourB, colourA;
-
-
-
-
-  
 };
 
 #endif

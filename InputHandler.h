@@ -29,19 +29,6 @@ public:
   void update();
   void clean();//will clear any initialized devices
 
-  void updateJoystickInput(SDL_Event event);//uses event to determine the controller input
-
-  std::vector<SDL_Joystick*> m_joysticks;//pointers needed to close connection in clean
-  bool m_bJoysticksInitialised;
-
-  void initialiseJoysticks();
-  bool joysticksInitialised() {
-    return m_bJoysticksInitialised;
-  }
-
-  int yvalue(int joy, int stick);//joy is ID of stick we want to use, 1 for left, 2 for right
-  int xvalue(int joy, int stick);
-
   //returns whether controller and button number is being pressed
   bool getButtonState(int joy, int buttonNumber)
   {
@@ -56,27 +43,36 @@ public:
 
   Vector2D* getMousePosition()
   {
-    //std::cout << "getMousePosition(): x: " << m_mousePosition->getX() << " y: " << m_mousePosition->getY() << std::endl; 
     return m_mousePosition;
   }
 
+  bool getIsMouseButtonPressed()
+  {
+    return isMouseButtonPressed;
+  }
+    void setIsMouseButtonPressed(bool val)
+  {
+    isMouseButtonPressed = val;
+  }
+
+  
   //returns true if parameter key is pressed
   bool isKeyDown(SDL_Scancode key);
 
   void reset();
+
+  void setIsHoldingObject(bool val) { isHoldingObject = val; }
+  bool getIsHoldingObject() { return isHoldingObject; }
   
 private:
 
   InputHandler();
   ~InputHandler() {}
-  
+
   static InputHandler* s_pInstance;
 
-  const int m_joystickDeadzone = 10000;
-  
-  std::vector<std::pair<Vector2D*, Vector2D*> > m_joystickValues;
-  //pair, one for each stick - Vector2D will contains movements of stick
-
+  bool isMouseButtonPressed;
+  bool isHoldingObject;
   
   std::vector<std::vector<bool> > m_buttonStates;
   //a list of buttons for each controller, true if pressed

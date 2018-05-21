@@ -4,6 +4,9 @@
 ShapeBody::ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA) :
     GameObject(), position(p_x, p_y), velocity(0,0), acceleration(0,0), forceAccumulated(0,0), colourR(p_colourR), colourG(p_colourG), colourB(p_colourB), colourA(p_colourA)
 {
+  arePhysicsEnabled = true;
+  isHeldByMouse = false;
+  //mouseReleased = true;
   damping = 0.0f;
   rotation = 0;
   setMass(p_mass);
@@ -24,8 +27,16 @@ void ShapeBody::setMass(const float mass)
 void ShapeBody::draw() {}
 
 
-void ShapeBody::update(){ //integrate
+void ShapeBody::update(){
+  //APPLY PHYSICS
+  if (arePhysicsEnabled) {  //if physics are enabled integrate
+    physicsIntegration();
+  }
+}
 
+//calculate and apply physics forces to the object should it have mass
+void ShapeBody::physicsIntegration()
+{
   //ensure has mass
   if (inverseMass <= 0.0f)
   {
@@ -38,10 +49,7 @@ void ShapeBody::update(){ //integrate
   {
     //std::cout << "ShapeBody.cpp.Integration() - duration below 0\n";
     return;
-  } else
-  {
-    //std::cout << "ShapeBody.cpp.Integration() - duration: " << duration  << "\n";
-    }
+  }
 
   
   //update position
@@ -61,8 +69,9 @@ void ShapeBody::update(){ //integrate
 
   //std::cout << "Velocity x: " << velocity.getX() << " y: " << velocity.getY() << "\n";
   //std::cout << "Acceleration x: " << acceleration.getX() << " y: " << acceleration.getY() << "\n\n";
+  
+}
 
-};
 
 //adds force to the vector that will be applied at the end of each frame
 void ShapeBody::addForce(Vector2D &force)

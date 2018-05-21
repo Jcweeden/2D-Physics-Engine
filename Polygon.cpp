@@ -6,11 +6,25 @@
 Polygon::Polygon(int p_x, int p_y,/* int p_rotation,*/ int p_mass, std::vector<Sint16> p_verticesX, std::vector<Sint16> p_verticesY, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA ) :
     ShapeBody( p_x,  p_y,  /*p_rotation,*/  p_mass, p_colourR,p_colourG,p_colourB,p_colourA), verticesX(p_verticesX), verticesY(p_verticesY)
 {
-  //init other variables
 
   std::cout << "Polygon.cpp: New Polygon - vertices: " << getVertexCount() << " - area: " << getArea() << "\n";
-   
+  findMinMaxXY();
   area = getArea();
+}
+
+void Polygon::findMinMaxXY()
+{
+  minX = maxX = verticesX[0];
+  minY = maxY = verticesY[0];
+
+  for (size_t i = 1; i < verticesX.size(); i++ )
+  {
+    if (verticesX[i] > maxX) maxX = verticesX[i];
+    if (verticesX[i] < minX) minX = verticesX[i];
+    if (verticesY[i] > maxY) maxY = verticesY[i];
+    if (verticesY[i] < minY) minY = verticesY[i];
+  }
+  
 }
 
 void Polygon::addVertex(Vector2D newVertex)
@@ -50,16 +64,64 @@ void Polygon::draw()
   }
   
   filledPolygonRGBA (TheGame::Instance()->getRenderer(), &vertPosX[0], &vertPosY[0], getVertexCount(), colourR, colourG, colourB, colourA);	
-  
-  //circleColor(TheGame::Instance()->getRenderer(), 600, 450, 33, 0xff00ff00);
-  //filledCircleColor(TheGame::Instance()->getRenderer(), 300, 450, 30, 0xff00ffcc); 
-
-  //SDL_Delay(3000);
 }
 
 void Polygon::update()
 {
+  //checks and updates if object is being held by the mouse
+  checkIfHeldByMouse();
+
+  
+  //updates physics
   ShapeBody::update();
+}
+
+void Polygon::checkIfHeldByMouse()
+{
+ //CHECK IF HELD BY POINTER
+  Vector2D* pMousePos = TheInputHandler::Instance()->getMousePosition();
+
+  //HOLDING OBJECT
+  if (isHeldByMouse) //if held by mouse
+  {
+    if (TheInputHandler::Instance()->getIsMouseButtonPressed())
+    {
+      setVelocity(0.0f,0.0f); //reset velocity
+      isHeldByMouse = false;
+      arePhysicsEnabled = true;
+      TheInputHandler::Instance()->setIsHoldingObject(false);
+      TheInputHandler::Instance()->setIsMouseButtonPressed(false);  //prevent other objects being picked up in same frame    
+    } else
+    {
+      //move shape to mouse pointer
+      setPositionX(pMousePos->getX() - offsetFromMouseX);
+      setPositionY(pMousePos->getY() - offsetFromMouseY);
+    }
+  }
+  //if not already holding an object
+  else if (!TheInputHandler::Instance()->getIsHoldingObject())
+  { //and if pointer is over object
+    if (pMousePos->getX() < (position.getX() + (maxX - minX) /*WIDTH*/) &&
+        pMousePos->getX() > position.getX() &&
+        pMousePos->getY() > position.getY() &&
+        pMousePos->getY() < position.getY() + (maxY - minY) /*HEIGHT*/
+        )
+    {
+      //if pointer is clicked - grab hold of the object
+      if (TheInputHandler::Instance()->getIsMouseButtonPressed())   
+      {
+        setVelocity(0.0f,0.0f); //reset Velocity
+        TheInputHandler::Instance()->setIsHoldingObject(true);
+        TheInputHandler::Instance()->setIsMouseButtonPressed(false);      
+        isHeldByMouse = true;
+        arePhysicsEnabled = false;
+        
+        //calculate offset from mouse pos to object
+        offsetFromMouseX = pMousePos->getX() - getPositionX();
+        offsetFromMouseY = pMousePos->getY() - getPositionY();
+      }
+    }
+  }
 }
 
 void Polygon::clean() {}
