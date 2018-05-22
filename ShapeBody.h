@@ -20,7 +20,7 @@ public:
 
   void setPhysicsEnabled(bool val) { arePhysicsEnabled = val; }
 
-
+  void setPosition(Vector2D p_position) {position = p_position; }
   void setPositionX(int val) {position.setX(val); }
   void setPositionY(int val) {position.setY(val); }
   Vector2D& getPosition() {return position; } 
@@ -30,11 +30,13 @@ public:
   float& getRotation() {return rotation; }
   float& getRotationalVelocity() { return rotationalVelocity; }
 
-  float getArea() {}
+  virtual float getArea() = 0;
 
   virtual Vector2D getVelocity() { return velocity; }
   virtual void setVelocity(float p_x, float p_y) { velocity.setX(p_x); velocity.setY(p_y); }
+  virtual void setVelocity(Vector2D p_velocity) { velocity = p_velocity; }
 
+  Vector2D getAcceleration() { return acceleration; }
   virtual void setAcceleration(float p_x, float p_y) { acceleration.setX(p_x); acceleration.setY(p_y); }
   
   virtual void setDamping(float val) { damping = val; }
@@ -71,7 +73,7 @@ protected:
 
   //x,y diff from first coordinate to the center of mass
   //Vector2D centerOfMass;
-  void calculateCenterOfMass();
+  //void calculateCenterOfMass();
 
   float area; //calulated in child constructor
 

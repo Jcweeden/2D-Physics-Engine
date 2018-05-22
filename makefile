@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp Game.cpp TextureManager.cpp InputHandler.cpp GameObject.cpp ShapeBody.cpp Polygon.cpp Circle.cpp ForceGenerator.cpp
+OBJS = main.cpp Game.cpp TextureManager.cpp InputHandler.cpp GameObject.cpp ShapeBody.cpp Polygon.cpp Circle.cpp ForceGenerator.cpp Contacts.cpp ShapeLinks.cpp
 
 #CC specifies which compiler we're using
 CC = g++ -std=c++11

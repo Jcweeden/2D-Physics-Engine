@@ -91,7 +91,7 @@ void ShapeSpring::updateForce(ShapeBody* shape, float duration)
   
   //calc magnitude of force
   float magnitude = force.magnitude();
-  magnitude = std::abs(magnitude-restLength);
+  magnitude = /*std::abs*/(magnitude-restLength);
   magnitude *= springConstant;
   
   //calc and apply

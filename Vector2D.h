@@ -10,8 +10,8 @@ public:
 
 Vector2D(float x, float y): m_x(x), m_y(y) {}
 
-  float getX() {return m_x;}
-  float getY() {return m_y;}
+  float getX() const {return m_x;}
+  float getY() const {return m_y;}
 
   void setX(float x) {m_x = x;}
   void setY(float y) {m_y = y;}  
@@ -65,7 +65,7 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
     }*/
   
   //dot product - scalar product (a . b)
-  Vector2D operator*(float val) {
+  Vector2D operator*(float val) const{
     return Vector2D(m_x * val, m_y * val);
   }
 
@@ -74,11 +74,17 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
     m_y *= scalar;
  }
 
-  //division of vectors
+ //scalar product of vector with given vector
+ float operator*(const Vector2D &v2) const
+ {
+   return m_x * v2.getX() + m_y * v2.getY();
+ }
+ 
+ //division of vectors
 
-  Vector2D operator/(float scalar) {
-    return Vector2D(m_x/scalar, m_y/scalar);
-  }
+ Vector2D operator/(float scalar) {
+   return Vector2D(m_x/scalar, m_y/scalar);
+ }
 
   Vector2D& operator/=(float scalar) {
     m_x /= scalar;
