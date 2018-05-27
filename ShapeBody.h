@@ -14,6 +14,8 @@ public:
 
   ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA);
 
+  ShapeBody();
+
   virtual void draw();
   virtual void update();
   virtual void clean();
@@ -30,7 +32,7 @@ public:
   float& getRotation() {return rotation; }
   float& getRotationalVelocity() { return rotationalVelocity; }
 
-  virtual float getArea() = 0;
+  virtual float getArea() {return 0; } //REWORK
 
   virtual Vector2D getVelocity() { return velocity; }
   virtual void setVelocity(float p_x, float p_y) { velocity.setX(p_x); velocity.setY(p_y); }
@@ -47,11 +49,15 @@ public:
   virtual bool hasFiniteMass() { return inverseMass >= 0.0f; }
 
   
-  void addForce(Vector2D &force);
-  
-protected:
+  void addForce(const Vector2D &force);
 
   void physicsIntegration();
+
+
+  void clearAccumForces();
+
+protected:
+
   
   bool arePhysicsEnabled;
   bool isHeldByMouse;
@@ -63,7 +69,6 @@ protected:
   Vector2D acceleration;
 
   Vector2D forceAccumulated; //sum of all forces to be applied in a frame. cleared after each update
-  void clearAccumForces();
 
   
   float damping;

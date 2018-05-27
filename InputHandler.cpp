@@ -39,7 +39,7 @@ void InputHandler::update()
     if (event.type == SDL_QUIT)
     {
       std::cout << "InputHandler: Quit event\n";
-      TheGame::Instance()->Quit();
+      TheGame::Instance()->quit();
     }
     
     //MOUSE BUTTONS

@@ -1,6 +1,10 @@
 #include "Contacts.h"
 //#include "ShapeBody.h"
+#include <vector>
+#include <limits>
 
+//ShapeContact::ShapeContact(const ShapeContact& other);
+//ShapeContact::ShapeContact& operator=(const ShapeContact& other);
 
 ShapeContact::ShapeContact(ShapeBody* p_shape01, ShapeBody* p_shape02, float p_restitution, Vector2D p_contactNormal)
     : restitution(p_restitution), contactNormal(p_contactNormal)
@@ -8,6 +12,13 @@ ShapeContact::ShapeContact(ShapeBody* p_shape01, ShapeBody* p_shape02, float p_r
   shapesInContact[0] = p_shape01;
   if (p_shape02) shapesInContact[1] = p_shape02;
 }
+
+ShapeContact::ShapeContact()
+    : restitution(0.0f), contactNormal(Vector2D(0,0)), penetrationDepth(0.0f)
+{
+  //shapeMovement = Vector2D[2];
+}
+
 
 void ShapeContact::resolve(float duration)
 {
@@ -105,6 +116,7 @@ void ShapeContact::resolveInterpenetration(float duration)
   //amount of penetration resolution per unit of mass
   Vector2D movePerIMass = contactNormal * (penetrationDepth / totalInverseMass);
 
+  /*
   //apply pen resolution
   shapesInContact[0]->setPosition(shapesInContact[0]->getPosition() + movePerIMass * shapesInContact[0]->getMass());
 
@@ -112,6 +124,22 @@ void ShapeContact::resolveInterpenetration(float duration)
   {
     shapesInContact[1]->setPosition(shapesInContact[1]->getPosition() + movePerIMass * -shapesInContact[1]->getMass());
   }
+  */
+
+
+   // Calculate the the movement amounts
+    shapeMovement[0] = movePerIMass * shapesInContact[0]->getMass();
+    if (shapesInContact[1]) {
+        shapeMovement[1] = movePerIMass * -shapesInContact[1]->getMass();
+    } else {
+        shapeMovement[1].clear();
+    }
+
+    // Apply the penetration resolution
+    shapesInContact[0]->setPosition(shapesInContact[0]->getPosition() + shapeMovement[0]);
+    if (shapesInContact[1]) {
+        shapesInContact[1]->setPosition(shapesInContact[1]->getPosition() + shapeMovement[1]);
+    }
 }
 
 ShapeContactResolver::ShapeContactResolver(unsigned p_maxIterations)
@@ -123,7 +151,69 @@ void ShapeContactResolver::setMaxIterations(unsigned p_maxIterations)
   maxIterations  = p_maxIterations;
 }
 
-void ShapeContactResolver::resolveContacts(ShapeContact *contactsArray, unsigned numContacts, float duration)
+
+void ShapeContactResolver::resolveContacts(ShapeContact *contactArray,
+                                              unsigned numContacts,
+                                              float duration)
+{
+    unsigned i;
+
+    iterationsRun = 0;
+    while(iterationsRun < maxIterations)
+    {
+        // Find the contact with the largest closing velocity;
+        float max = std::numeric_limits<double>::max();
+        unsigned maxIndex = numContacts;
+        for (i = 0; i < numContacts; i++)
+        {
+          float sepVel = contactArray[i].calculateSeparatingVelocity();
+            if (sepVel < max &&
+                (sepVel < 0 || contactArray[i].penetrationDepth > 0))
+            {
+                max = sepVel;
+                maxIndex = i;
+            }
+        }
+
+        // Do we have anything worth resolving?
+        if (maxIndex == numContacts) break;
+
+        // Resolve this contact
+        contactArray[maxIndex].resolve(duration);
+
+        // Update the interpenetrations for all particles
+        Vector2D *move = contactArray[maxIndex].shapeMovement;
+        for (i = 0; i < numContacts; i++)
+        {
+            if (contactArray[i].shapesInContact[0] == contactArray[maxIndex].shapesInContact[0])
+            {
+                contactArray[i].penetrationDepth -= move[0] * contactArray[i].contactNormal;
+            }
+            else if (contactArray[i].shapesInContact[0] == contactArray[maxIndex].shapesInContact[1])
+            {
+                contactArray[i].penetrationDepth -= move[1] * contactArray[i].contactNormal;
+            }
+            if (contactArray[i].shapesInContact[1])
+            {
+                if (contactArray[i].shapesInContact[1] == contactArray[maxIndex].shapesInContact[0])
+                {
+                    contactArray[i].penetrationDepth += move[0] * contactArray[i].contactNormal;
+                }
+                else if (contactArray[i].shapesInContact[1] == contactArray[maxIndex].shapesInContact[1])
+                {
+                    contactArray[i].penetrationDepth += move[1] * contactArray[i].contactNormal;
+                }
+            }
+        }
+
+        iterationsRun++;
+    }
+}
+
+
+
+/*
+  void ShapeContactResolver::resolveContacts(/*std::vector<ShapeContact*> contactsArray*//*ShapeContact *contactsArray, unsigned numContacts, float duration)
 {
   iterationsRun = 0;
   while (iterationsRun < maxIterations)
@@ -146,3 +236,4 @@ void ShapeContactResolver::resolveContacts(ShapeContact *contactsArray, unsigned
     iterationsRun++;
   }
 }
+                                                                                         */

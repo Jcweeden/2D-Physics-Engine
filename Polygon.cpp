@@ -12,6 +12,15 @@ Polygon::Polygon(int p_x, int p_y,/* int p_rotation,*/ int p_mass, std::vector<S
   area = getArea();
 }
 
+Polygon::Polygon() :
+    ShapeBody( 200,  400,  /*p_rotation,*/  1, 255,0,0,255), verticesX(std::vector<Sint16> {0, 20, 20, 0}), verticesY(std::vector<Sint16> {0, 0, 20, 20})
+{
+
+  std::cout << "Polygon.cpp: New Polygon - vertices: " << getVertexCount() << " - area: " << getArea() << "\n";
+  findMinMaxXY();
+  area = getArea();
+}
+
 void Polygon::findMinMaxXY()
 {
   minX = maxX = verticesX[0];

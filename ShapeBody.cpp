@@ -12,6 +12,18 @@ ShapeBody::ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_c
   setMass(p_mass);
 }
 
+ShapeBody::ShapeBody() :
+    GameObject(), position(0, 0), velocity(0,0), acceleration(0,0), forceAccumulated(0,0), colourR(0), colourG(0), colourB(0), colourA(0)
+{
+  arePhysicsEnabled = true;
+  isHeldByMouse = false;
+  //mouseReleased = true;
+  damping = 0.0f;
+  rotation = 0;
+  setMass(1.0f);
+}
+
+
 void ShapeBody::setMass(const float mass)
 {
   if(mass == 0)
@@ -74,7 +86,7 @@ void ShapeBody::physicsIntegration()
 
 
 //adds force to the vector that will be applied at the end of each frame
-void ShapeBody::addForce(Vector2D &force)
+void ShapeBody::addForce(const Vector2D &force)
 {
   forceAccumulated += force;
 }

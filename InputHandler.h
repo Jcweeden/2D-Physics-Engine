@@ -50,7 +50,7 @@ public:
   {
     return isMouseButtonPressed;
   }
-    void setIsMouseButtonPressed(bool val)
+  void setIsMouseButtonPressed(bool val)
   {
     isMouseButtonPressed = val;
   }

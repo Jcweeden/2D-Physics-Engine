@@ -4,12 +4,18 @@
 #include "SDL2/SDL_image.h"
 #include "Game.h"
 #include "LoaderParams.h"
+#include "Vector2D.h"
 #include <iostream>
 #include <string>
 
 class GameObject {
 
 public:
+
+
+  GameObject() {}
+  virtual ~GameObject() {}  
+  
   virtual void draw() = 0;
   virtual void update() = 0;
   virtual void clean() = 0;
@@ -21,11 +27,12 @@ public:
   virtual int getPositionY() = 0;
   
   virtual float& getRotation() = 0;
-  
+  /*
+  virtual void setVelocity(float p_x, float p_y) = 0;
+  virtual void setAcceleration(float p_x, float p_y) = 0;
+  */
 protected:
 
-  GameObject() {}
-  virtual ~GameObject() {}  
 };
 
 #endif

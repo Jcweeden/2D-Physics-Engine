@@ -2,15 +2,12 @@
 #define _Game_
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
-#include "InputHandler.h"
-#include "TextureManager.h"
-#include "GameObject.h"
+//#include "InputHandler.h"
+//#include "TextureManager.h"
+//#include "GameObject.h"
+#include "Demo.h"
 
-
-
-//#include "Player.h"
-//#include "Enemy.h"
-#include "LoaderParams.h"
+//#include "LoaderParams.h"
 #include <vector>
 
 class GameObject;
@@ -19,7 +16,8 @@ class Game {
 
 public:
 
-    static Game* Instance()
+  //singleton for Game
+  static Game* Instance()
   {
     if(s_pInstance == 0)
     {
@@ -40,26 +38,31 @@ public:
   void handleEvents();
   void clean();
 
-  void LoadTextures();//remove
-  void LoadObjects();
-  void Quit();
+  //void LoadTextures();//remove
+  //void LoadObjects();
+  void quit();
   //void DelayedClose(int ms) {SDL_Delay(ms); SDL_Quit();}
   
   //a function to access the private running variable
-  bool running() {return m_bRunning;}
+  bool isRunning() {return m_bRunning;}
 
-  int m_currentFrame;//can delete?
+  //int m_currentFrame;//can delete?
   
-  std::vector<GameObject*> m_gameObjects;
+  //std::vector<GameObject*> m_gameObjects;
 
   //function to return the renderer
   SDL_Renderer* getRenderer() const { return m_pRenderer; }
 
-  int getWidth() { return windowWidth; }
-  int getHeight() { return windowHeight; }
+  int getWindowWidth() { return windowWidth; }
+  int getWindowHeight() { return windowHeight; }
 
+  //the time it took to render the last frame
   Uint32 getFrameTime();
   void setFrameTime(Uint32 val);
+
+  //the currently running physics demo
+  Demo* demo;
+
   
 private:
 
@@ -74,12 +77,9 @@ private:
   SDL_Window* m_pWindow;
   SDL_Renderer* m_pRenderer;
 
-
   int windowWidth;
   int windowHeight;
-  
-  //TextureManager m_textureManager;
-    
+      
   bool m_bRunning;
 
 };

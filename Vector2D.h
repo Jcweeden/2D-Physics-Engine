@@ -8,8 +8,14 @@ class Vector2D
 {
 public:
 
-Vector2D(float x, float y): m_x(x), m_y(y) {}
-
+Vector2D(float x, float y)
+    : m_x(x), m_y(y)
+  {}
+  
+Vector2D()
+    : m_x(0), m_y(0)
+  {}
+  
   float getX() const {return m_x;}
   float getY() const {return m_y;}
 
@@ -46,7 +52,8 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
   }*/
   
   //subtraction of vectors
-  Vector2D operator-(const Vector2D& v2) {
+  Vector2D operator-(const Vector2D& v2) const
+  {
     return Vector2D(m_x - v2.m_x, m_y - v2.m_y);
   }
 
@@ -65,7 +72,7 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
     }*/
   
   //dot product - scalar product (a . b)
-  Vector2D operator*(float val) const{
+  Vector2D operator*(const float val) const{
     return Vector2D(m_x * val, m_y * val);
   }
 
@@ -127,6 +134,13 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
     return (m_x * v2.getY()) - (m_y * v2.getX());
   }
 
+  Vector2D unit() const
+  {
+    Vector2D result = *this;
+    result.normalise();
+    return result;
+  }
+  
 
   void clear()
   {
@@ -134,11 +148,12 @@ Vector2D(float x, float y): m_x(x), m_y(y) {}
     m_y = 0;
   }
 
+  float m_x;
+  float m_y;
   
 private:
 
-  float m_x;
-  float m_y;
+
 
 
 };

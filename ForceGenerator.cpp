@@ -7,8 +7,10 @@ void ForceRegistry::updateForces(float duration)
   for (size_t i = 0; i < registrations.size(); i++)
   {
     //registrations[i].fg->printForceGenType();
+    //std::cout << (i+1) << " / "  << registrations.size() << " : checkingForces" << " " << registrations[i].shape->getPositionX() << " " << registrations[i].shape->getPositionY() << "\n";
     registrations[i].fg->updateForce(registrations[i].shape, duration);
   }
+  //std::cout << "\n";
 }
 
 void ForceRegistry::add(ShapeBody* shape, ForceGenerator *fg)
@@ -32,7 +34,7 @@ void ForceRegistry::remove(ShapeBody* shape, ForceGenerator *fg)
       if (registrations[i].fg == fg)
       {
         registrations.erase(registrations.begin()+i);
-        std::cout << "ForceRegistry::remove() - Erased\n";
+        //std::cout << "ForceRegistry::remove() - Erased\n";
         return;
       }
     }
@@ -190,4 +192,52 @@ void ShapeBuoyancy::updateForce(ShapeBody* shape, float duration)
   float forceY = volumeInWater * waterDensity;
     
   force.setY(-forceY);
+}
+
+
+void BlobForceGenerator::updateForce(ShapeBody *shape, float duration)
+{
+  unsigned joinCount = 0;
+  for (unsigned i = 0; i < shapesCount; i++)
+  {
+    // Don't attract yourself
+    if (shapes + i == shape) continue;
+
+    // Work out the separation distance
+    Vector2D separation =
+        shapes[i].getPosition() - shape->getPosition();
+    //separation.z = 0.0f;
+    float distance = separation.magnitude();
+
+    if (distance < minNaturalDistance)
+    {
+      // Use a repulsion force.
+      distance = 1.0f - distance / minNaturalDistance;
+      shape->addForce(
+          separation.unit() * (1.0f - distance) * maxReplusion * -1.0f
+                         );
+      joinCount++;
+    }
+    else if (distance > maxNaturalDistance && distance < maxDistance)
+    {
+      std::cout << " using attraction force\n";
+      // Use an attraction force.
+      distance =
+          (distance - maxNaturalDistance) /
+          (maxDistance - maxNaturalDistance);
+      shape->addForce(
+          separation.unit() * distance * maxAttraction
+                         );
+      joinCount++;
+    }
+  }
+
+  // If the particle is the head, and we've got a join count, then float it.
+  if (shape == shapes && joinCount > 0 && maxFloat > 0)
+  {
+    float force = float(joinCount / maxFloat) * floatHead;
+    if (force > floatHead) force = floatHead;
+    shape->addForce(Vector2D(0, force)); //dubious
+  }
+
 }

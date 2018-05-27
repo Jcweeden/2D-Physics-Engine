@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include "Game.h"
 
+#include <iostream>
+
 Game* g_game = 0;
 
 const int FPS = 60; //how many FPS we want to run at
@@ -16,7 +18,7 @@ int main(int argc, char* argv[])
    if(TheGame::Instance()->init("2D RigidBody Physics Engine", 100, 100, 800, 600, true)) {
    std::cout << "Main: game init successful\n";
 
-   while (TheGame::Instance()->running())
+   while (TheGame::Instance()->isRunning())
      {
        frameStart = SDL_GetTicks(); // get time at start of frame (num ms since calling SDL_Init)
        TheGame::Instance()->setFrameTime(frameStart-lastFrame);

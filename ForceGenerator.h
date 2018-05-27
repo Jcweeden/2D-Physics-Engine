@@ -12,7 +12,7 @@ class ForceGenerator {
 public:
 
   virtual void updateForce(ShapeBody *shape, float duration) = 0;
-  virtual void printForceGenType() = 0;
+  //virtual void printForceGenType();
 };
 
 //keeps a vector holding all of the forces being applied to an object
@@ -52,7 +52,7 @@ class ShapeGravity: public ForceGenerator
 public:
   ShapeGravity(const Vector2D &gravity); //constr
 
-  virtual void printForceGenType() { std::cout << "ForceGen type : gravity\n";}
+  //virtual void printForceGenType() { std::cout << "ForceGen type : gravity\n";}
   virtual void updateForce(ShapeBody* shape, float durations);
 };
 
@@ -64,7 +64,7 @@ class ShapeDrag: public ForceGenerator
 
 public:
   ShapeDrag(float k1, float k2); //constr
-  virtual void printForceGenType() { std::cout << "ForceGen type : drag\n"; }
+  //virtual void printForceGenType() { std::cout << "ForceGen type : drag\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
 };
 
@@ -78,7 +78,7 @@ class ShapeSpring: public ForceGenerator
 
 public:
   ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength);
-  virtual void printForceGenType() { std::cout << "ForceGen type : basicSpring\n"; }
+  //virtual void printForceGenType() { std::cout << "ForceGen type : basicSpring\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
 };
 
@@ -92,7 +92,7 @@ class ShapeAnchoredSpring: public ForceGenerator
 
 public:
   ShapeAnchoredSpring(Vector2D *p_anchor, float p_springConstant, float p_restLength);
-  virtual void printForceGenType() { std::cout << "ForceGen type : anchoredSpring\n"; }
+  //virtual void printForceGenType() { std::cout << "ForceGen type : anchoredSpring\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
 };
 
@@ -105,7 +105,7 @@ class ShapeBungee: public ForceGenerator
 
 public:
   ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength);
-  virtual void printForceGenType() { std::cout << "ForceGen type : bungee\n"; }
+  //virtual void printForceGenType() { std::cout << "ForceGen type : bungee\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
 };
 
@@ -119,8 +119,60 @@ class ShapeBuoyancy: public ForceGenerator
 
 public:
   ShapeBuoyancy(float p_depthForMaxBuoyancyForce, float p_shapeVolume, float p_waterHeight, float p_waterDensity = 1000.0f);
-  virtual void printForceGenType() { std::cout << "ForceGen type : buoyancy\n"; }
+  //virtual void printForceGenType() { std::cout << "ForceGen type : buoyancy\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
 };
+
+
+class BlobForceGenerator : public ForceGenerator
+{
+ public:
+  /**
+   * Holds a pointer to the particles we might be attracting.
+   */
+  ShapeBody *shapes;
+
+  //number of objects in shapes array
+  unsigned shapesCount;
+  
+  /**
+   * The maximum force used to push the particles apart.
+   */
+  float maxReplusion;
+
+  /**
+   * The maximum force used to pull particles together.
+   */
+  float maxAttraction;
+
+  /**
+   * The separation between particles where there is no force.
+   */
+  float minNaturalDistance, maxNaturalDistance;
+
+  /**
+   * The force with which to float the head particle, if it is
+   * joined to others.
+   */
+  float floatHead;
+
+  /**
+   * The maximum number of particles in the blob before the head
+   * is floated at maximum force.
+   */
+  unsigned maxFloat;
+
+  /**
+   * The separation between particles after which they 'break' apart and
+   * there is no force.
+   */
+  float  maxDistance;
+
+  virtual void updateForce(
+      ShapeBody *particle,
+      float duration
+                           );
+};
+
 
 #endif
