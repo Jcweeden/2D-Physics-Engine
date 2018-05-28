@@ -29,11 +29,6 @@ public:
   void update();
   void clean();//will clear any initialized devices
 
-  //returns whether controller and button number is being pressed
-  bool getButtonState(int joy, int buttonNumber)
-  {
-    return m_buttonStates[joy][buttonNumber];
-  }
 
   //returns whether a button is being pressed or not
   bool getMouseButtonState(int buttonNumber)
@@ -59,6 +54,7 @@ public:
   //returns true if parameter key is pressed
   bool isKeyDown(SDL_Scancode key);
 
+  //sets all mouse button presses to false
   void reset();
 
   void setIsHoldingObject(bool val) { isHoldingObject = val; }

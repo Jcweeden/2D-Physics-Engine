@@ -82,6 +82,16 @@ void InputHandler::update()
       m_mousePosition->setX((float)event.motion.x);
       m_mousePosition->setY((float)event.motion.y);
     }
+
+    //KEYBOARD
+    if(event.type == SDL_KEYDOWN)
+    {
+      switch (event.key.keysym.sym)
+      {
+        case SDLK_w:
+          break;
+      }
+    }
   }
 }
 

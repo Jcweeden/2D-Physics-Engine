@@ -3,17 +3,19 @@
 
 
 #include "Demo.h"
-#include "Random.h"
 #include <math.h>
+#include <vector>
 #include "Vector2D.h"
 #include "Contacts.h"
+#include "InputHandler.h"
 #include "World.h"
 #include "Platform.h"
+#include "ForceGenerator.h"
 #include "SDL2/SDL2_gfxPrimitives.h" 
 
 
 #define BLOB_COUNT 5
-#define PLATFORM_COUNT 5
+#define PLATFORM_COUNT 3
 #define BLOB_RADIUS 14.0f
 
 /**
@@ -21,23 +23,39 @@
  */
 class BlobDemo : public Demo
 {
-    ShapeBody *blobs;
 
-    Platform *platforms;
+//array holding blobs
+ShapeBody *blobs;
+//number of blobs in blobs array
+int blobsCount;
+//radius of a blob
+float blobRadius;
 
-    World world;
+//array holding platforms
+Platform *platforms;
+//number of platforms in platforms array
+int platformsCount;
 
-    BlobForceGenerator blobForceGenerator;
+World world;
 
-    /* The control for the x-axis. */
-    //    float xAxis;
+BlobForceGenerator blobForceGenerator;
 
-    /* The control for the y-axis. */
-    //    float yAxis;
 
+ForceRegistry gravityRegistry;
+ForceRegistry buoyancyRegistry;
+
+bool waterEnabled;
+bool windEnabled;
+
+//list of vertices used to draw blue rect representing water on-screen
+std::vector<Sint16> waterVerticesX;
+std::vector<Sint16> waterVerticesY;
+
+//list of vertices used to draw gray rect representing wind on-screen
+std::vector<Sint16> windVerticesX;
+std::vector<Sint16> windVerticesY;
 
 public:
-    // Instantiates all objects in a new BlobDemo
     BlobDemo(); //constr
     virtual ~BlobDemo(); //destr
 
@@ -47,14 +65,21 @@ public:
     // applies physics to blobs
     virtual void update();
 
-    /** Handle a key press. */
-    //virtual void key(unsigned char key);
-
     //deletes all objects for cleanup upon closing demo
     virtual void clean();
 
     //restarts the scene
     virtual void reset();
+
+    //collects keyboard/mouse input and applies appropriate actions
+    virtual void handleInput();
+
+    //switches water on/off
+    void switchWater();
+
+    //switches wind on/off
+    void switchWind();
+
 };
 
 #endif

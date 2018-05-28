@@ -40,7 +40,7 @@ public:
     //restarts the scene
     virtual void reset();
 
-
+virtual void handleInput();
 
 };
 

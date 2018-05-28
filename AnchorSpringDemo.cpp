@@ -114,3 +114,8 @@ void AnchorSpringDemo::reset()
   springs[2]->setPosition(Vector2D(600,400));
     
 }
+
+void AnchorSpringDemo::handleInput()
+{
+
+}

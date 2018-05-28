@@ -12,6 +12,7 @@ public:
 
   virtual void reset() = 0;
 
+  virtual void handleInput() = 0;
 };
 
 #endif
