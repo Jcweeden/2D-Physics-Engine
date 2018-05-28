@@ -50,7 +50,7 @@ BlobDemo::BlobDemo()
   blobForceGenerator.maxFloat = 2;
   blobForceGenerator.floatHead = 8.0f;
     
-  // Create the platforms
+  //create the platforms
   platforms = new Platform[platformsCount];
 
   platforms[0].start = Vector2D(100, 100 );
@@ -153,12 +153,12 @@ void BlobDemo::draw()
 
 void BlobDemo::update()
 {
+    //remove accumu forces from previous frame for each obj
+    world.startFrame();
+  
     //get duration of the last frame
      float duration = TheGame::Instance()->getFrameTime() * 0.01f;
      if (duration <= 0.0f) return; 
-  
-    //remove accumu forces from previous frame for each obj
-    world.startFrame();
 
     //apply gravity
     gravityRegistry.updateForces(TheGame::Instance()->getFrameTime());

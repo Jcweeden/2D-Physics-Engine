@@ -6,6 +6,8 @@
 //DEMOS
 #include "BlobDemo.h"
 #include "AnchorSpringDemo.h"
+#include "ElasticMeshDemo.h"
+
 
 //define static instance
 Game* Game::s_pInstance = 0;
@@ -61,7 +63,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
    frameTime = 0;
 
    //demo = new AnchorSpringDemo;
-   demo = new BlobDemo;
+   //demo = new BlobDemo;
+   demo = new ElasticMeshDemo;
    
    return true;
 }
@@ -112,6 +115,18 @@ void Game::handleEvents()
   if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_RETURN))
   {
     demo->reset(); 
+  }
+  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_1))
+  {
+    demo = new AnchorSpringDemo;
+  }
+  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_2))
+  {
+    demo = new BlobDemo;
+  }
+  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_3))
+  {
+   demo = new ElasticMeshDemo;
   }
 }
 

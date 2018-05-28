@@ -14,13 +14,6 @@
 #include "SDL2/SDL2_gfxPrimitives.h" 
 
 
-#define BLOB_COUNT 5
-#define PLATFORM_COUNT 3
-#define BLOB_RADIUS 14.0f
-
-/**
- * BlobDemo .
- */
 class BlobDemo : public Demo
 {
 

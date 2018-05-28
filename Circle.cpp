@@ -7,17 +7,17 @@ Circle::Circle(int p_x, int p_y, float p_radius, /* int p_rotation,*/ int p_mass
 {
   //init other variables
   radius = p_radius;
-  std::cout << "Circle.cpp: New Circle - radius: " << getRadius() << " - area: " << getArea() << "\n";
+  //std::cout << "Circle.cpp: New Circle - radius: " << getRadius() << " - area: " << getArea() << "\n";
    
   area = getArea();
 }
 
 Circle::Circle() :
-    ShapeBody( 0,  0, /*p_rotation,*/ 1, 255, 0, 0, 255)
+    ShapeBody( 0,  0, /*p_rotation,*/ 1, 0, 0, 0, 255)
 {
   //init other variables
   radius = 30;
-  std::cout << "Circle.cpp: New Circle - radius: " << getRadius() << " - area: " << getArea() << "\n";
+  //std::cout << "Circle.cpp: New Circle - radius: " << getRadius() << " - area: " << getArea() << "\n";
    
   area = getArea();
 }

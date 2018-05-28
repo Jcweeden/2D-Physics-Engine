@@ -6,7 +6,7 @@
 
 //class ShapeBody;
 
-class ShapeLink {
+class ShapeLink : public ShapeContactGenerator {
 public:
   //two shapes held together by this link
   ShapeBody* linkedShapes[2];
@@ -16,7 +16,7 @@ protected:
   float currentLength() const;
 
 public:
-  virtual unsigned fillContact(ShapeContact *contact, unsigned limit) const = 0;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const = 0;
 };
 
 
@@ -28,7 +28,7 @@ public:
 
   float restitution;
   
-  virtual unsigned fillContact(ShapeContact *contact, unsigned limit) const;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const;
 };
 
 
@@ -40,7 +40,7 @@ public:
   //restitution is always 0
   //float restitution;
   
-  virtual unsigned fillContact(ShapeContact *contact, unsigned limit) const;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const;
 };
 
 #endif

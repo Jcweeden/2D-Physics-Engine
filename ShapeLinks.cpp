@@ -10,7 +10,7 @@ float ShapeLink::currentLength() const
 
 //acts as col detect - examines state of cable and returns a contact if the cable has reached its limit
 //this contact is added to all others, and processed in the contact resolver algorithm
-unsigned ShapeCable::fillContact(ShapeContact *contact, unsigned limit) const
+unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit) const
 {
   //get cable length
   float length = currentLength();
@@ -33,7 +33,7 @@ unsigned ShapeCable::fillContact(ShapeContact *contact, unsigned limit) const
   return 1;
 }
 
-unsigned ShapeRod::fillContact(ShapeContact *contact, unsigned limit) const
+unsigned ShapeRod::addContact(ShapeContact *contact, unsigned limit) const
 {
   //get the current rod length
   float currLength = currentLength();
