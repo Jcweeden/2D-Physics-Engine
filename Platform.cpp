@@ -4,7 +4,7 @@
 
 unsigned Platform::numShapesToCheckCollisionsWith = 0;
 
-unsigned Platform::addContact(ShapeContact *contact, unsigned limit) const
+unsigned Platform::addContact(ShapeContact *contact, unsigned limit) 
 {
 
   unsigned used = 0;

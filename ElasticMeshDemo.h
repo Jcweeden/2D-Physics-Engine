@@ -14,31 +14,39 @@
 #include "ShapeLinks.h"
 #include "Circle.h"
 
+/**
+ * The mesh is designed to rip apart through the middle as the rods at either end move in
+ * opposing directions. As the rods do not deform, they will continue moving whilst the elastic
+ * cables holding the nodes together stretch and snap.
+ **/
+
 
 class ElasticMeshDemo : public Demo
 {
-
-  Circle *shapes;
-
-  int shapesCount; //must be a square number (e.g. 4,9,16,25,36,49)
-
-  int shapeRadius;
+  //array holding all nodes that are joined by cables to form a mesh
+  Circle *meshNodes;
+  //number of nodes the mesh is created from
+  int meshNodesCount; //(must be a square number (e.g. 4,9,16,25,36,49,56,81,100,121,144))
+  //the size at which a node is drawn on-screen - does not affect the simulation
+  int nodeRadius;
   
-  //array holding cables
+  //array holding cables that connect the nodes together to form the mesh
   ShapeCable *cables;
-  //number of cables in platforms array
+  //total number of cables in cables array
   int cablesCount;
 
+  //holds all nodes and the connections between them, and updates objs from the contacts applied to
+  //the nodes and cables
   World world;
 
 public:
     ElasticMeshDemo(); //constr
     virtual ~ElasticMeshDemo(); //destr
 
-    // draws the blobs on screen
+    //draws the nodes and cables on screen
     virtual void draw();
 
-    // applies physics to blobs
+    //applies physics to nodes
     virtual void update();
 
     //deletes all objects for cleanup upon closing demo
@@ -49,6 +57,17 @@ public:
 
     //collects keyboard/mouse input and applies appropriate actions
     virtual void handleInput();
+
+
+private:
+    //calculates and places nodes in position to form a mesh
+    //returns distanceBetweenNodes, the distance between each node, and is used in connectNodesWithCables to
+    //establish the maximum stretched length of a cable
+    float placeNodes();
+
+    //conects all nodes with cables to form the mesh
+    //distanceBetweenNodes is multiplied by 1.2 to give the max stretch length between nodes
+    void connectNodesWithCables(float distanceBetweenNodes);
 };
 
 #endif

@@ -16,7 +16,7 @@ protected:
   float currentLength() const;
 
 public:
-  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const = 0;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit) = 0;
 };
 
 
@@ -24,11 +24,21 @@ public:
 class ShapeCable : public ShapeLink
 {
 public:
-  float cableMaxLength;
 
+  bool hasSnapped = false;
+  
+  //if the cable is longer than this length it will generate a contact and
+  //pull the other linked shape with it
+  float cableMaxLengthBeforeStretching;
+
+  //if the cable is stetched to this length then the cable itself will snap
+  float cableMaxLengthBeforeSnapping;
+  
   float restitution;
   
-  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit);
+
+  bool setSnapped(bool val) {hasSnapped = val;}
 };
 
 
@@ -40,7 +50,7 @@ public:
   //restitution is always 0
   //float restitution;
   
-  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit);
 };
 
 #endif

@@ -3,7 +3,6 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "Game.h"
-#include "LoaderParams.h"
 #include "Vector2D.h"
 #include <iostream>
 #include <string>

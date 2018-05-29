@@ -38,7 +38,7 @@ Platform(float p_restitution, float p_shapeRadius)
   void setRestitution(float p_restitution) { restitution = p_restitution; }
 
   
-  virtual unsigned addContact(ShapeContact *contact, unsigned limit) const;
+  virtual unsigned addContact(ShapeContact *contact, unsigned limit);
 };
 
 #endif

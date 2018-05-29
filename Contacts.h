@@ -79,7 +79,7 @@ public:
 
   //fills shapeContact with generated contact
   //returns number of contacts that have been written
-  virtual unsigned addContact(ShapeContact* contact, unsigned limit) const = 0;
+  virtual unsigned addContact(ShapeContact* contact, unsigned limit) = 0;
 };
 
 
