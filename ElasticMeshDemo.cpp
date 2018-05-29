@@ -3,29 +3,42 @@
 
 ElasticMeshDemo::ElasticMeshDemo()
     :
-    meshNodesCount(144), //must be square num - 4,9,16,25,36,49
+    meshNodesCount(36), //must be an EVEN square num - 4,16,36,56,100,144
     nodeRadius(5),
     world (
         //number of contacts handled per frame = number of nodes + number of cables
-        meshNodesCount + ((sqrt(meshNodesCount)-1) * ((2*(sqrt(meshNodesCount) - 1)) + 2))
+        meshNodesCount +
+        ((sqrt(meshNodesCount)-1) * ((2*(sqrt(meshNodesCount) - 1)) + 2)) +
+        sqrt(meshNodesCount) - 1 -1
            )
 {
   //calculate number of cables required to connect all meshNodes
-  int n = sqrt(meshNodesCount) - 1; //sqrt -1
-  cablesCount = n * ((2*n) +2);
-  //std::cout << "cablesCount: " << cablesCount << "\n";
+  int meshHeight = sqrt(meshNodesCount) - 1; //gets the height of the mesh (number of links required)
+
+  //rodsCount is the name as the height of the mesh, minus 1 for the link that will remain a cable
+  rodsCount = meshHeight - 1; //minus from height of mesh to get number of rods required
+
+  //get total amount of links for entire mesh
+  cablesCount = meshHeight * ((2*meshHeight) +2);
+  //and remove the rods that will be the mesh
+  cablesCount -= rodsCount ;
+  
+  std::cout << "meshNodesCount: " << meshNodesCount << "\n";
+  std::cout << "cablesCount: " << cablesCount << "\n";
+  std::cout << "rodsCount: " << rodsCount << "\n";
 
   //create array of nodes
   meshNodes = new Circle[meshNodesCount];
-
   //place nodes in correct positions
-  float distanceBetweenNodes = placeNodes();
+  placeNodes();
+
+  rods = new ShapeRod[rodsCount];
+  connectNodesWithRods();
   
   //create array of cables to link nodes together
   cables = new ShapeCable[cablesCount];
-
   //connect nodes with cables
-  connectNodesWithCables(distanceBetweenNodes);
+  connectNodesWithCables();
 }
 
 
@@ -35,40 +48,8 @@ ElasticMeshDemo::~ElasticMeshDemo()
 
 void ElasticMeshDemo::draw()
 {
-
-
-  /*
-  //draw horizontal lines between nodes
-  for (size_t i = 0; i < sqrt(meshNodesCount); i++)
-  {
-    for (size_t j = 0; j < sqrt(meshNodesCount)-1; j++)
-    {
-      //draw line from meshNodes[(i*sqrt(meshNodesCount)+j] to +1 (the node next to it horizontally)
-      aalineRGBA(TheGame::Instance()->getRenderer(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)].getPositionX(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)].getPositionY(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1].getPositionX(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1].getPositionY(),
-                 0,0,0,255);
-    }
-  }
-
-  //draw vertical lines between nodes
-  for (size_t i = 0; i < sqrt(meshNodesCount)-1; i++)
-  {
-    for (size_t j = 0; j < sqrt(meshNodesCount); j++)
-    {
-      aalineRGBA(TheGame::Instance()->getRenderer(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)].getPositionX(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)].getPositionY(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)].getPositionX(),
-                 meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)].getPositionY(),
-                 0,0,0,255);
-
-    }
-  }
-*/
-  //for each cable
+  
+  //draw each cable
   for (size_t i = 0; i < cablesCount; i++)
   { //if the cable has not snapped
     if (!cables[i].hasSnapped)
@@ -82,13 +63,27 @@ void ElasticMeshDemo::draw()
                  0,0,0,255);
     }
   }
+  
 
+  
+  //draw rods
+  for (size_t i = 0; i < rodsCount; i++)
+  {
+    aalineRGBA(TheGame::Instance()->getRenderer(),
+               rods[i].linkedShapes[0]->getPositionX(),
+               rods[i].linkedShapes[0]->getPositionY(),
+               rods[i].linkedShapes[1]->getPositionX(),
+               rods[i].linkedShapes[1]->getPositionY(),
+               255,0,0,255);
+  }
+  
   
   //draw meshNodes from their base class
   for (size_t i = 0 ; i < meshNodesCount ; i++)
   {
     meshNodes[i].draw();
   }
+  
 }
 
 
@@ -123,8 +118,8 @@ void ElasticMeshDemo::clean()
 
 void ElasticMeshDemo::reset()
 {
-  float widthPerX = placeNodes(); //reset the position and forces applied to the nodes
-  connectNodesWithCables(widthPerX); //and reset the cable links between the nodes
+  placeNodes(); //reset the position and forces applied to the nodes
+  connectNodesWithCables(); //and reset the cable links between the nodes
 }
 
 
@@ -132,7 +127,7 @@ void ElasticMeshDemo::handleInput()
 {}
 
 
-float ElasticMeshDemo::placeNodes()
+void ElasticMeshDemo::placeNodes()
 {
 
   Sint16 winWidth = TheGame::Instance()->getWindowWidth();
@@ -141,11 +136,11 @@ float ElasticMeshDemo::placeNodes()
   int percentageBorderWidth = 50;
   
   float borderX = ((winWidth / 100) * (percentageBorderWidth/2));
-  float widthPerX = ((winWidth / 100) * (100-percentageBorderWidth))
+  horizontalDistanceBetweenNodes = ((winWidth / 100) * (100-percentageBorderWidth))
       / 100 * (100 / (sqrt(meshNodesCount)-1));
   
   float borderY = ((winHeight / 100) * (percentageBorderWidth/2));
-  float heightPerY = ((winHeight / 100) * (100-percentageBorderWidth))
+  verticalDistanceBetweenNodes = ((winHeight / 100) * (100-percentageBorderWidth))
       / 100 * (100 / (sqrt(meshNodesCount)-1));
   
 
@@ -155,8 +150,8 @@ float ElasticMeshDemo::placeNodes()
   {
 
     //calculate x,y of node according to size of the border
-    int x = borderX + (((i % (int)sqrt(meshNodesCount)) * widthPerX));
-    int y = borderY + (int)(i / sqrt(meshNodesCount)) * heightPerY;
+    int x = borderX + (((i % (int)sqrt(meshNodesCount)) * horizontalDistanceBetweenNodes));
+    int y = borderY + (int)(i / sqrt(meshNodesCount)) * verticalDistanceBetweenNodes;
 
     meshNodes[i].setPosition(Vector2D(x, y));
     meshNodes[i].setRadius(nodeRadius);
@@ -166,7 +161,7 @@ float ElasticMeshDemo::placeNodes()
     meshNodes[i].clearAccumForces();
 
     //for leftmost nodes on top half of mesh - add acc to move right, underneath the mesh itself
-    if (i > (int)meshNodesCount / 2)
+    if (i >= (int)meshNodesCount / 2)
     {
       if (i % (int)sqrt(meshNodesCount) == 0) {
         meshNodes[i].setAcceleration(-1.0f, 0.0f);
@@ -180,11 +175,31 @@ float ElasticMeshDemo::placeNodes()
       }
     }
   }
-
-  return widthPerX;
 }
 
-void ElasticMeshDemo::connectNodesWithCables(float distanceBetweenNodes)
+
+void ElasticMeshDemo::connectNodesWithRods()
+{
+ int rodNum = 0;
+
+  for (size_t i = 0; i < rodsCount+1; i++)
+  {
+    //if not the middle connector
+    if ((int)(i*sqrt(meshNodesCount))+(int)sqrt(meshNodesCount) != meshNodesCount/2)
+    {
+    rods[rodNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount))];
+    rods[rodNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount))+(int)sqrt(meshNodesCount)];
+
+    rods[rodNum].rodLength = verticalDistanceBetweenNodes;
+
+    world.getContactGenerators().push_back(rods + rodNum);
+    rodNum++;
+    }
+  }
+}
+
+
+void ElasticMeshDemo::connectNodesWithCables()
 {
   //create horizontal cable links
   int cableNum = 0;
@@ -192,33 +207,55 @@ void ElasticMeshDemo::connectNodesWithCables(float distanceBetweenNodes)
   {
     for (size_t j = 0; j < sqrt(meshNodesCount)-1; j++)
     {
+      /*
+      if (i == 0) {
+        int num = (int)(j*sqrt(meshNodesCount))+(int)sqrt(meshNodesCount);
+        if ((num == meshNodesCount/2) == false)
+        {
+          std::cout << "skipped\n";
+          continue;
+        }
+      }
+      */
       cables[cableNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)];
       cables[cableNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1];
 
       
-      cables[cableNum].cableMaxLengthBeforeStretching = distanceBetweenNodes * 1.2;
-      cables[cableNum].cableMaxLengthBeforeSnapping = distanceBetweenNodes * 1.25;
+      cables[cableNum].cableMaxLengthBeforeStretching = horizontalDistanceBetweenNodes * 1.2;
+      cables[cableNum].cableMaxLengthBeforeSnapping = horizontalDistanceBetweenNodes * 1.25;
 
-      cables[cableNum].restitution = 0.0f;
+      cables[cableNum].restitution = 1.4f;
       world.getContactGenerators().push_back(cables + cableNum);
       cableNum++;
+      
     }
   }
 
-   //create vertical cable links
+  //create vertical cable links
   for (size_t i = 0; i < sqrt(meshNodesCount)-1; i++)
   {
     for (size_t j = 0; j < sqrt(meshNodesCount); j++)
     {
-      cables[cableNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)];
-      cables[cableNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)];
+      //if any connection in first column, that is not the only cable connection
+      if ( j == 0  &&  i != (sqrt(meshNodesCount) / 2) - 1)
+        {
+          //then skip this iteration
+        }
+      else //connect the node and vertical node beneath it with a cable
+      {
+        cables[cableNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)];
+        cables[cableNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)];
       
-      cables[cableNum].cableMaxLengthBeforeStretching = distanceBetweenNodes * 1.2;
-      cables[cableNum].cableMaxLengthBeforeSnapping = cables[cableNum].cableMaxLengthBeforeStretching * 1.02;
+        cables[cableNum].cableMaxLengthBeforeStretching = verticalDistanceBetweenNodes * 1.2;
+        cables[cableNum].cableMaxLengthBeforeSnapping = verticalDistanceBetweenNodes * 1.41;
 
-      cables[cableNum].restitution = 0.0f;
-      world.getContactGenerators().push_back(cables + cableNum);
-      cableNum++;
+        cables[cableNum].restitution = 1.4f;
+        world.getContactGenerators().push_back(cables + cableNum);
+        cableNum++;
+      }
     }
   }
+
+
+  
 }

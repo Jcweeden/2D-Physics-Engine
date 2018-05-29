@@ -26,15 +26,22 @@ class ElasticMeshDemo : public Demo
   //array holding all nodes that are joined by cables to form a mesh
   Circle *meshNodes;
   //number of nodes the mesh is created from
-  int meshNodesCount; //(must be a square number (e.g. 4,9,16,25,36,49,56,81,100,121,144))
+  int meshNodesCount; //(must be an EVEN square number (e.g. 4,16,36,56,100,144))
   //the size at which a node is drawn on-screen - does not affect the simulation
   int nodeRadius;
+
+  float verticalDistanceBetweenNodes;
+  float horizontalDistanceBetweenNodes;
+
   
   //array holding cables that connect the nodes together to form the mesh
   ShapeCable *cables;
   //total number of cables in cables array
   int cablesCount;
 
+  ShapeRod *rods;
+  int rodsCount;
+  
   //holds all nodes and the connections between them, and updates objs from the contacts applied to
   //the nodes and cables
   World world;
@@ -63,11 +70,13 @@ private:
     //calculates and places nodes in position to form a mesh
     //returns distanceBetweenNodes, the distance between each node, and is used in connectNodesWithCables to
     //establish the maximum stretched length of a cable
-    float placeNodes();
+    void placeNodes();
+
+    void connectNodesWithRods();
 
     //conects all nodes with cables to form the mesh
     //distanceBetweenNodes is multiplied by 1.2 to give the max stretch length between nodes
-    void connectNodesWithCables(float distanceBetweenNodes);
+    void connectNodesWithCables();
 };
 
 #endif

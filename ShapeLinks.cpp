@@ -29,10 +29,7 @@ unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit)
     std::cout << "snap - length: " << length << " lenBeforeSnapping: " << cableMaxLengthBeforeSnapping << "\n";
 
     setSnapped(true);
-    
-    //remove the second object from the array
-    //if (linkedShapes[1])
-    //linkedShapes[1] = 0;
+    return 0;
   }
   
   //if overstretched, then return a contact
@@ -45,7 +42,7 @@ unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit)
   contact->contactNormal = normal;
 
   //length of the penetration 
-  contact->penetrationDepth = length - cableMaxLengthBeforeStretching;
+  contact->penetrationDepth = (length - cableMaxLengthBeforeStretching) * .8;
   contact->restitution = restitution;
 
   return 1;
