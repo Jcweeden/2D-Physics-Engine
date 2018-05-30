@@ -35,11 +35,20 @@ class ElasticMeshDemo : public Demo
 
   
   //array holding cables that connect the nodes together to form the mesh
-  ShapeCable *cables;
+  ShapeBungee *cables;
   //total number of cables in cables array
   int cablesCount;
 
+  ForceRegistry bungeeRegistry;
+  
+  //ShapeBungee *bungees;
+
+  //int bungeesCount;
+
+  
+  //array holding non-flexible rods that connect front most nodes together
   ShapeRod *rods;
+  //total number of rods in rods array
   int rodsCount;
   
   //holds all nodes and the connections between them, and updates objs from the contacts applied to
@@ -65,7 +74,8 @@ public:
     //collects keyboard/mouse input and applies appropriate actions
     virtual void handleInput();
 
-
+    void checkForSnappedCables();
+    
 private:
     //calculates and places nodes in position to form a mesh
     //returns distanceBetweenNodes, the distance between each node, and is used in connectNodesWithCables to

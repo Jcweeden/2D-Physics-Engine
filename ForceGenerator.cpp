@@ -41,6 +41,20 @@ void ForceRegistry::remove(ShapeBody* shape, ForceGenerator *fg)
   } 
 }
 
+//removes pair of shape and forceGen from registry should they exist
+void ForceRegistry::remove(ForceGenerator *fg)
+{
+  for (size_t i = 0; i < registrations.size(); i++)
+  {
+    if (registrations[i].fg == fg)
+    {
+      registrations.erase(registrations.begin()+i);
+      //std::cout << "ForceRegistry::remove() - Erased\n";
+      return;
+    }
+  } 
+}
+
 //removes all registrations 
 void ForceRegistry::clear()
 {
@@ -131,28 +145,41 @@ void ShapeAnchoredSpring::updateForce(ShapeBody* shape, float duration)
 
 //// BUNGEE
 
-ShapeBungee::ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength) :
-    endOfBungeeObj(p_endOfBungeeObj), springConstant(p_springConstant), restLength(p_restLength)
+ShapeBungee::ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength, float p_snapLength)
+    : endOfBungeeObj(p_endOfBungeeObj), springConstant(p_springConstant), restLength(p_restLength), snapLength(p_snapLength), hasSnapped(false)
 {}
 
 void ShapeBungee::updateForce(ShapeBody* shape, float duration)
 {
   //std::cout << "shpae x: " << shape->getPosition().getX() << "y: " << shape->getPosition().getY() << "\n";
-  Vector2D force = shape->getPosition();
-  force -= endOfBungeeObj->getPosition(); //calc distance between two ends of bungee
+  Vector2D force = shape->getPosition() - endOfBungeeObj->getPosition(); //calc distance between two ends of bungee
 
-  //check if bungee is compressed
-  float magnitude = force.magnitude();
-  if (magnitude <= restLength) return; // compressed (not extended beyond rest length) - do not apply force
+  float length = force.magnitude();
+
+  //if the bungee is compressed, and not long enough to compress 
+  if (length <= restLength)
+  {
+    return; // compressed (not extended beyond rest length) - do not apply force
+  }
+  //else if long enough to compress, but not long enough to snap
+  else if (length < snapLength)
+  {
+    //calc magnitude of force
+    length = springConstant * (restLength - length);
   
-  //calc magnitude of force
-  magnitude = springConstant * (restLength - magnitude);
-  
-  //calc and apply
-  force.normalise();
-  force *= -magnitude;
-  //std::cout << "x: " << force.getX() << "y: " << force.getY() << "\n";
-  shape->addForce(force);
+    //calc and apply
+    force.normalise();
+    force *= -length;
+    //std::cout << "x: " << force.getX() << "y: " << force.getY() << "\n";
+    shape->addForce(force);
+  }
+  //else the bungee has exceeded its max length, and has snapped
+  else
+  {
+    std::cout << "snap - length: " << length << " lenBeforeSnapping: " << snapLength << "\n";
+    setSnapped(true);
+    //delete pointer
+  }
 }
 
 //BUOYANCY

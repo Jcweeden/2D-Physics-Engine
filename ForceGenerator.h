@@ -26,6 +26,7 @@ protected:
     ForceGenerator *fg;
   };
 
+public:
   //list of force registrations
   typedef std::vector<ShapeForceRegistration> Registry;
   Registry registrations;
@@ -36,7 +37,10 @@ public:
 
   //removes shape from registry
   void remove(ShapeBody* shape, ForceGenerator *fg);
+  
+  void remove(ForceGenerator *fg);
 
+  
   //removes all registrations 
   void clear();
 
@@ -98,15 +102,26 @@ public:
 
 class ShapeBungee: public ForceGenerator
 {
+public:
   ShapeBody *endOfBungeeObj;
 
   float springConstant;
   float restLength;
+  float snapLength;
+  bool hasSnapped;
 
 public:
-  ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength);
-  //virtual void printForceGenType() { std::cout << "ForceGen type : bungee\n"; }
+  ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength, float p_snapLength);
+  
+  ShapeBungee()
+      : endOfBungeeObj(nullptr), springConstant(1.0f), restLength(1.0f), snapLength(1.0f), hasSnapped(false)
+  {}
+
   virtual void updateForce(ShapeBody* shape, float duration);
+
+  void setSnapped(bool val) { hasSnapped = val; }
+  bool getSnapped() { return hasSnapped; }
+  
 };
 
 

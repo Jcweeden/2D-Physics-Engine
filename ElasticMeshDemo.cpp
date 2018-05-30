@@ -3,7 +3,7 @@
 
 ElasticMeshDemo::ElasticMeshDemo()
     :
-    meshNodesCount(36), //must be an EVEN square num - 4,16,36,56,100,144
+    meshNodesCount(100), //must be an EVEN square num - 4,16,36,56,100,144
     nodeRadius(5),
     world (
         //number of contacts handled per frame = number of nodes + number of cables
@@ -36,7 +36,7 @@ ElasticMeshDemo::ElasticMeshDemo()
   connectNodesWithRods();
   
   //create array of cables to link nodes together
-  cables = new ShapeCable[cablesCount];
+  cables = new ShapeBungee[cablesCount];
   //connect nodes with cables
   connectNodesWithCables();
 }
@@ -48,12 +48,12 @@ ElasticMeshDemo::~ElasticMeshDemo()
 
 void ElasticMeshDemo::draw()
 {
-  
+  /*
   //draw each cable
   for (size_t i = 0; i < cablesCount; i++)
   { //if the cable has not snapped
-    if (!cables[i].hasSnapped)
-    {
+    //if (!cables[i].hasSnapped)
+    //{
       
       aalineRGBA(TheGame::Instance()->getRenderer(),
                  cables[i].linkedShapes[0]->getPositionX(),
@@ -61,10 +61,25 @@ void ElasticMeshDemo::draw()
                  cables[i].linkedShapes[1]->getPositionX(),
                  cables[i].linkedShapes[1]->getPositionY(),
                  0,0,0,255);
-    }
+      //}
+  }
+  */
+
+  //draw bungees
+  for (size_t i = 0; i < bungeeRegistry.registrations.size(); i++)
+  {
+    ForceGenerator* a = bungeeRegistry.registrations[i].fg;
+    ShapeBungee* b = static_cast<ShapeBungee*>(a);
+
+    
+          aalineRGBA(TheGame::Instance()->getRenderer(),
+                     bungeeRegistry.registrations[i].shape->getPositionX(),
+                     bungeeRegistry.registrations[i].shape->getPositionY(),
+                     b->endOfBungeeObj->getPositionX(),
+                     b->endOfBungeeObj->getPositionY(),
+                     0,0,0,255);
   }
   
-
   
   //draw rods
   for (size_t i = 0; i < rodsCount; i++)
@@ -77,26 +92,45 @@ void ElasticMeshDemo::draw()
                255,0,0,255);
   }
   
-  
   //draw meshNodes from their base class
   for (size_t i = 0 ; i < meshNodesCount ; i++)
   {
     meshNodes[i].draw();
   }
-  
 }
 
+void ElasticMeshDemo::checkForSnappedCables()
+{
+    //draw bungees
+  for (size_t i = 0; i < bungeeRegistry.registrations.size(); i++)
+  {
+    ForceGenerator* a = bungeeRegistry.registrations[i].fg;
+    ShapeBungee* b = static_cast<ShapeBungee*>(a);
+
+    if (b->getSnapped() == true)
+    {
+      std::cout << "removing";
+      bungeeRegistry.remove(a); 
+    }
+  }
+}
 
 void ElasticMeshDemo::update()
 {
-
   //remove accumu forces from previous frame for each node
   world.startFrame();
 
+  checkForSnappedCables();
+  
   //get duration of the last frame
   float duration = TheGame::Instance()->getFrameTime() * 0.01f;
   if (duration <= 0.0f) return; 
-  
+
+  //check for snapped cables and remove them
+
+  //apply forces to the bungees
+  bungeeRegistry.updateForces(TheGame::Instance()->getFrameTime());
+
   
   //update meshNodes from their base class - updates if an object is being held by mouse
   for (size_t i = 0 ; i < meshNodesCount ; i++)
@@ -133,7 +167,7 @@ void ElasticMeshDemo::placeNodes()
   Sint16 winWidth = TheGame::Instance()->getWindowWidth();
   Sint16 winHeight = TheGame::Instance()->getWindowHeight();
 
-  int percentageBorderWidth = 50;
+  int percentageBorderWidth = 60;
   
   float borderX = ((winWidth / 100) * (percentageBorderWidth/2));
   horizontalDistanceBetweenNodes = ((winWidth / 100) * (100-percentageBorderWidth))
@@ -156,7 +190,7 @@ void ElasticMeshDemo::placeNodes()
     meshNodes[i].setPosition(Vector2D(x, y));
     meshNodes[i].setRadius(nodeRadius);
     meshNodes[i].setVelocity(0,0);
-    meshNodes[i].setDamping(0.9f);
+    meshNodes[i].setDamping(0.65f);
     meshNodes[i].setMass(1.0f);
     meshNodes[i].clearAccumForces();
 
@@ -201,30 +235,103 @@ void ElasticMeshDemo::connectNodesWithRods()
 
 void ElasticMeshDemo::connectNodesWithCables()
 {
+  float springConstant = -0.1f;  //> -0.05
+  float restLengthMultipler = .99f;
+  float snapLengthMultipler = 4.5f;
+
+  
   //create horizontal cable links
   int cableNum = 0;
   for (size_t i = 0; i < sqrt(meshNodesCount); i++)
   {
     for (size_t j = 0; j < sqrt(meshNodesCount)-1; j++)
     {
-      /*
-      if (i == 0) {
-        int num = (int)(j*sqrt(meshNodesCount))+(int)sqrt(meshNodesCount);
-        if ((num == meshNodesCount/2) == false)
-        {
-          std::cout << "skipped\n";
-          continue;
-        }
+
+      if(i > sqrt(meshNodesCount)/2)
+      {
+      
+      ShapeBungee* bungeeForce = new ShapeBungee(
+          &meshNodes[(int)(i*sqrt(meshNodesCount)+j)],
+          springConstant,
+          horizontalDistanceBetweenNodes * restLengthMultipler,
+          horizontalDistanceBetweenNodes * snapLengthMultipler);
+      
+      bungeeRegistry.add(
+          &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1],
+          bungeeForce);
       }
-      */
+      else
+      {
+          
+        ShapeBungee* bungeeForce = new ShapeBungee(
+            &meshNodes[(int)(i*sqrt(meshNodesCount)+j)],
+            springConstant,
+            horizontalDistanceBetweenNodes * restLengthMultipler,
+            horizontalDistanceBetweenNodes * snapLengthMultipler);
+      
+        bungeeRegistry.add(
+            &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1],
+            bungeeForce);
+
+      }
+      cableNum++;
+    }
+  }
+
+  //create vertical cable links
+  for (size_t i = 0; i < sqrt(meshNodesCount)-1; i++)
+  {
+    for (size_t j = 0; j < sqrt(meshNodesCount); j++)
+    {
+      //if i is not in the first column, and i is not the middle connection (the only cable connection)
+      if ( j == 0  &&  i != (sqrt(meshNodesCount) / 2) - 1)
+      { /*then skip this iteration, we are one of the rod connections*/  }
+      else //connect the node and vertical node beneath it with a cable
+      {
+      ShapeBungee* bungeeForce = new ShapeBungee(
+          &meshNodes[(int)(i*sqrt(meshNodesCount)+j)],
+          springConstant,
+          verticalDistanceBetweenNodes * restLengthMultipler,
+          verticalDistanceBetweenNodes * snapLengthMultipler);
+
+      
+      bungeeRegistry.add(
+          &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)],
+          bungeeForce);
+        
+        cableNum++;
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+void ElasticMeshDemo::connectNodesWithCables()
+{
+  //create horizontal cable links
+  int cableNum = 0;
+  for (size_t i = 0; i < sqrt(meshNodesCount); i++)
+  {
+    for (size_t j = 0; j < sqrt(meshNodesCount)-1; j++)
+    {
       cables[cableNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)];
       cables[cableNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+1];
 
       
-      cables[cableNum].cableMaxLengthBeforeStretching = horizontalDistanceBetweenNodes * 1.2;
-      cables[cableNum].cableMaxLengthBeforeSnapping = horizontalDistanceBetweenNodes * 1.25;
+      cables[cableNum].cableMaxLengthBeforeStretching = horizontalDistanceBetweenNodes * 1.6;
+      cables[cableNum].cableMaxLengthBeforeSnapping = horizontalDistanceBetweenNodes * 2.45;
 
-      cables[cableNum].restitution = 1.4f;
+      cables[cableNum].restitution = 1.2f;
       world.getContactGenerators().push_back(cables + cableNum);
       cableNum++;
       
@@ -246,16 +353,14 @@ void ElasticMeshDemo::connectNodesWithCables()
         cables[cableNum].linkedShapes[0] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)];
         cables[cableNum].linkedShapes[1] = &meshNodes[(int)(i*sqrt(meshNodesCount)+j)+(int)sqrt(meshNodesCount)];
       
-        cables[cableNum].cableMaxLengthBeforeStretching = verticalDistanceBetweenNodes * 1.2;
-        cables[cableNum].cableMaxLengthBeforeSnapping = verticalDistanceBetweenNodes * 1.41;
+        cables[cableNum].cableMaxLengthBeforeStretching = verticalDistanceBetweenNodes * 1.6;
+        cables[cableNum].cableMaxLengthBeforeSnapping = verticalDistanceBetweenNodes * 2.45;
 
-        cables[cableNum].restitution = 1.4f;
+        cables[cableNum].restitution = 1.2f;
         world.getContactGenerators().push_back(cables + cableNum);
         cableNum++;
       }
     }
   }
-
-
-  
 }
+*/

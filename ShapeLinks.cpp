@@ -42,7 +42,7 @@ unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit)
   contact->contactNormal = normal;
 
   //length of the penetration 
-  contact->penetrationDepth = (length - cableMaxLengthBeforeStretching) * .8;
+  contact->penetrationDepth = (length - cableMaxLengthBeforeStretching) * 1.2;
   contact->restitution = restitution;
 
   return 1;
