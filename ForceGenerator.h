@@ -75,15 +75,26 @@ public:
 
 class ShapeSpring: public ForceGenerator
 {
+public:
   ShapeBody *endOfSpringObj;
 
   float springConstant;
   float restLength;
+  float snapLength;
+  bool hasSnapped;
+  
 
 public:
-  ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength);
-  //virtual void printForceGenType() { std::cout << "ForceGen type : basicSpring\n"; }
+  ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength, float p_snapLength );
+
+    ShapeSpring()
+      : endOfSpringObj(nullptr), springConstant(1.0f), restLength(1.0f), snapLength(1.0f), hasSnapped(false)
+  {}
+
   virtual void updateForce(ShapeBody* shape, float duration);
+
+  void setSnapped(bool val) { hasSnapped = val; }
+  bool getSnapped() { return hasSnapped; }
 };
 
 

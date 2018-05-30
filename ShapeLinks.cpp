@@ -26,8 +26,6 @@ unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit)
   //if the cable has overstretched it's max length before snapping
   if (length > cableMaxLengthBeforeSnapping)
   {
-    std::cout << "snap - length: " << length << " lenBeforeSnapping: " << cableMaxLengthBeforeSnapping << "\n";
-
     setSnapped(true);
     return 0;
   }
