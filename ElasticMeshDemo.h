@@ -25,7 +25,6 @@
    contact back together, and the length whereby it has stretched too far and will snap.
  **/
 
-
 class ElasticMeshDemo : public Demo
 {
   //array holding all nodes that are joined by cables to form a mesh
@@ -35,6 +34,9 @@ class ElasticMeshDemo : public Demo
   //the size at which a node is drawn on-screen - does not affect the simulation
   int nodeRadius;
 
+  //press N key to turn on/off. if on nodes between cables are drawn
+  bool drawMeshNodes;
+  
   //the number of pixels between nodes upon spawing. Calculated from int percentageBorderWidth
   float verticalDistanceBetweenNodes;
   float horizontalDistanceBetweenNodes;
@@ -96,8 +98,8 @@ private:
   
 
 public:
-    ElasticMeshDemo(); //constr
-    virtual ~ElasticMeshDemo(); //destr
+    ElasticMeshDemo(int p_numOfMeshNodes = 36); //constr
+    ~ElasticMeshDemo() {std::cout << "destroyed Elastic\n"; } //destr
 
     //draws the nodes and cables on screen
     virtual void draw();

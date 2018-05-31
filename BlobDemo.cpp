@@ -121,9 +121,6 @@ void BlobDemo::reset()
   waterEnabled = false;
 }
 
-BlobDemo::~BlobDemo()
-{}
-
 void BlobDemo::draw()
 {
   //draw each platform
@@ -207,18 +204,22 @@ void BlobDemo::update()
 
 void BlobDemo::clean()
 {
-  delete[] platforms;
-  delete[] blobs;
+  buoyancyRegistry.clear();
+  gravityRegistry.clear();
+  if (platforms) delete[] platforms;
+  if (blobs) delete[] blobs;
 }
 
 void BlobDemo::handleInput()
 {
-  if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_B))
+  if (TheInputHandler::Instance()->keyBPressed)
   {
+    TheInputHandler::Instance()->keyBPressed = false;
     switchWater();
   }
-    if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_W))
+    if (TheInputHandler::Instance()->keyWPressed)
   {
+    TheInputHandler::Instance()->keyWPressed = false;
     switchWind();
   }
 }

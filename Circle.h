@@ -15,6 +15,8 @@ public:
   Circle(int p_x, int p_y, float p_radius, /* int p_rotation,*/ int p_mass, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA);
 
   Circle();
+  Circle(Circle const &) = delete; //delete copy constr
+
   
   virtual void draw();
   virtual void update();

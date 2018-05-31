@@ -62,9 +62,9 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
    frameTime = 0;
 
-   //demo = new AnchorSpringDemo;
+   demo = new AnchorSpringDemo;
    //demo = new BlobDemo;
-   demo = new ElasticMeshDemo;
+   //demo = new ElasticMeshDemo;
    
    return true;
 }
@@ -112,21 +112,39 @@ void Game::handleEvents()
   demo->handleInput();
   
   //press Enter to restart the current demo
-  if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_RETURN))
+  if (TheInputHandler::Instance()->keyReturnPressed)
   {
+    TheInputHandler::Instance()->keyReturnPressed = false;
+    std::cout << "Reset Demo\n";
     demo->reset(); 
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_1))
+  else if (TheInputHandler::Instance()->key1Pressed)
   {
+    TheInputHandler::Instance()->key1Pressed = false;
+    
+    demo->clean();
+    delete demo;
+    
+    std::cout << "Demo01 opened\n";
     demo = new AnchorSpringDemo;
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_2))
+  else if (TheInputHandler::Instance()->key2Pressed)
   {
+    std::cout << "Demo02 opened\n";
+    TheInputHandler::Instance()->key2Pressed = false;
+    demo->clean();
+    delete demo;
+
     demo = new BlobDemo;
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_3))
+  else if (TheInputHandler::Instance()->key3Pressed)
   {
-   demo = new ElasticMeshDemo;
+    std::cout << "Demo03 opened\n";    
+    TheInputHandler::Instance()->key3Pressed = false;
+    demo->clean();
+    delete demo;
+
+    demo = new ElasticMeshDemo;
   }
 }
 

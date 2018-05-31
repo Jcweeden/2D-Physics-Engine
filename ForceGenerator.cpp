@@ -58,6 +58,15 @@ void ForceRegistry::remove(ForceGenerator *fg)
 //removes all registrations 
 void ForceRegistry::clear()
 {
+  
+  if (registrations.size() > 0) {
+    for (ShapeForceRegistration reg : registrations)
+    {
+      //delete reg.shape;
+      //delete reg.fg;
+    }
+  }
+  
   registrations.clear();
 }
 

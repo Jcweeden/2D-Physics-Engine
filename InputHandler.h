@@ -59,6 +59,12 @@ public:
 
   void setIsHoldingObject(bool val) { isHoldingObject = val; }
   bool getIsHoldingObject() { return isHoldingObject; }
+
+
+  bool keyReturnPressed,
+      key1Pressed, key2Pressed, key3Pressed, key4Pressed,
+      keyBPressed, //Demo02
+      keyQPressed, keyWPressed, keyEPressed, keyRPressed, keyNPressed; //used in Demo03
   
 private:
 

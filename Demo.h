@@ -1,9 +1,14 @@
 #ifndef _Demo_
 #define _Demo_
 
-class Demo /*: public Demo*/
+#include <iostream>
+
+class Demo
 {
 public:
+
+  virtual ~Demo() {/*std::cout << "destroyed base\n";*/ };
+  
   virtual void draw() = 0;
 
   virtual void update() = 0;

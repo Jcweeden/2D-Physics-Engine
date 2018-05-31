@@ -19,7 +19,7 @@ AnchorSpringDemo::AnchorSpringDemo()
 
   ShapeAnchoredSpring* anchoredSpringLightWeight = new ShapeAnchoredSpring(new Vector2D(200,100), 0.5f, 100.0f);
   registry.add(lightCircle, anchoredSpringLightWeight);
-
+  
   //Mid-Weight
   Circle* midWeightCircle = new Circle(400,400, 24, 1, 255,255,0,255);
   midWeightCircle->setMass(6.0f);
@@ -34,12 +34,8 @@ AnchorSpringDemo::AnchorSpringDemo()
 
   ShapeAnchoredSpring* anchoredSpringMidWeight = new ShapeAnchoredSpring(new Vector2D(400,100), 0.5f, 100.0f);
   registry.add(midWeightCircle, anchoredSpringMidWeight);
-
   
-  //HEAVY-WEIGHT
-  // std::vector<Sint16>  polygonTestX{0, 40, 40, 0};
-  //std::vector<Sint16>  polygonTestY{0, 0, 40, 40};
-  
+  //HEAVY-WEIGHT  
   Circle* heavyCircle = new Circle(600,400, 40, 1, 255,0,0,255);
   heavyCircle->setMass(10.0f);
   heavyCircle->setVelocity(0.0f, 0.0f);
@@ -92,12 +88,18 @@ void AnchorSpringDemo::clean()
   //delete each obj in vector
   for (GameObject* obj : springs)
     delete obj;
+
   //clear vector
   springs.clear();
+
+  //clear registry
+  registry.clear();
 }
 
+/*
 AnchorSpringDemo::~AnchorSpringDemo()
 {}
+*/
 
 void AnchorSpringDemo::reset()
 {

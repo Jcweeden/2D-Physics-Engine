@@ -9,6 +9,11 @@ InputHandler* InputHandler::s_pInstance = 0;
 InputHandler::InputHandler()
 {
   isHoldingObject = false;
+  keyReturnPressed = key1Pressed = key2Pressed = key3Pressed = key4Pressed =
+      keyBPressed =
+      keyQPressed = keyWPressed = keyEPressed = keyRPressed = keyNPressed =
+      false;
+
   
   //MOUSE
   for (size_t i = 0; i < 3; i++)
@@ -88,8 +93,40 @@ void InputHandler::update()
     {
       switch (event.key.keysym.sym)
       {
-        case SDLK_w:
+        case SDLK_RETURN:
+          keyReturnPressed = true;          
           break;
+        case SDLK_1:
+          key1Pressed = true;
+          break;
+        case SDLK_2:
+          key2Pressed = true;
+          break;
+        case SDLK_3:
+          key3Pressed = true;          
+          break;
+        case SDLK_4:
+          key4Pressed = true;          
+          break;
+        case SDLK_q:
+          keyQPressed = true;
+          break;
+        case SDLK_w:
+          keyWPressed = true;
+          break;
+        case SDLK_e:
+          keyEPressed = true;          
+          break;
+        case SDLK_r:
+          keyRPressed = true;          
+          break;
+        case SDLK_n:
+          keyNPressed = true;          
+          break;
+        case SDLK_b:
+          keyBPressed = true;          
+          break;
+      
       }
     }
   }

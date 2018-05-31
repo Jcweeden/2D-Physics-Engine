@@ -13,6 +13,7 @@ public:
 
 
   GameObject() {}
+  GameObject(GameObject const &) = delete; //delete copy constr
   virtual ~GameObject() {}  
   
   virtual void draw() = 0;

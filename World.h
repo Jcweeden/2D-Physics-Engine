@@ -44,7 +44,7 @@ public:
   //Optional - supply num of contact-resolution p_iterations to use (default contacts number x2)
   World(unsigned maxContacts, unsigned iterations = 0);
   
-  // ~World(); //destructor
+  ~World(); //destructor
 
   //calls each contact generator to report their contacts
   //returns number of generatred contacts

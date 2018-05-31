@@ -50,7 +50,7 @@ std::vector<Sint16> windVerticesY;
 
 public:
     BlobDemo(); //constr
-    virtual ~BlobDemo(); //destr
+    ~BlobDemo() {}; //destr
 
     // draws the blobs on screen
     virtual void draw();

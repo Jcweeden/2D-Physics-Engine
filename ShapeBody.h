@@ -15,6 +15,8 @@ public:
   ShapeBody(int p_x, int p_y,/* int p_rotation,*/ int p_mass, Uint8 p_colourR, Uint8 p_colourG, Uint8 p_colourB, Uint8 p_colourA);
 
   ShapeBody();
+  ShapeBody(ShapeBody const &) = delete; //delete copy constr
+
 
   virtual void draw();
   virtual void update();

@@ -23,7 +23,7 @@ ForceRegistry registry;
 public:
     // Instantiates all objects in a new BlobDemo
     AnchorSpringDemo(); //constr
-    ~AnchorSpringDemo(); //destr
+    ~AnchorSpringDemo() {/*std::cout << "destroyed anchor\n";*/}; //destr
 
     // draws the blobs on screen
     virtual void draw();

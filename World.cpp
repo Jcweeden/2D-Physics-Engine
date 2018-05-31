@@ -13,12 +13,12 @@ maxContacts(maxContacts)
 
 }
 
-/*
+
   World::~World()
 {
     delete[] contacts;
 }
-*/
+
 
 void World::startFrame()
 {

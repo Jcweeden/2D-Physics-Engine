@@ -10,7 +10,8 @@
 class ForceGenerator {
 
 public:
-
+  virtual ~ForceGenerator(){};
+  
   virtual void updateForce(ShapeBody *shape, float duration) = 0;
   //virtual void printForceGenType();
 };
@@ -54,8 +55,11 @@ class ShapeGravity: public ForceGenerator
   Vector2D gravity;
 
 public:
+  ~ShapeGravity(){};
   ShapeGravity(const Vector2D &gravity); //constr
+  ShapeGravity(ShapeGravity const &) = delete; //delete copy constr
 
+  
   //virtual void printForceGenType() { std::cout << "ForceGen type : gravity\n";}
   virtual void updateForce(ShapeBody* shape, float durations);
 };
@@ -67,6 +71,9 @@ class ShapeDrag: public ForceGenerator
   float k2; //velocity squared drag coefficient
 
 public:
+  ~ShapeDrag(){};
+  ShapeDrag(ShapeDrag const &) = delete; //delete copy constr
+
   ShapeDrag(float k1, float k2); //constr
   //virtual void printForceGenType() { std::cout << "ForceGen type : drag\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
@@ -85,6 +92,9 @@ public:
   
 
 public:
+  ~ShapeSpring(){};
+  ShapeSpring(ShapeSpring const &) = delete; //delete copy constr
+
   ShapeSpring(ShapeBody *p_endOfSpringObj, float p_springConstant, float p_restLength, float p_snapLength );
 
     ShapeSpring()
@@ -107,7 +117,9 @@ class ShapeAnchoredSpring: public ForceGenerator
 
 public:
   ShapeAnchoredSpring(Vector2D *p_anchor, float p_springConstant, float p_restLength);
-  //virtual void printForceGenType() { std::cout << "ForceGen type : anchoredSpring\n"; }
+
+  ShapeAnchoredSpring(ShapeAnchoredSpring const &) = delete; //delete copy constr
+
   virtual void updateForce(ShapeBody* shape, float duration);
 };
 
@@ -122,6 +134,9 @@ public:
   bool hasSnapped;
 
 public:
+  ~ShapeBungee(){};
+  ShapeBungee(ShapeBungee const &) = delete; //delete copy constr
+
   ShapeBungee(ShapeBody* p_endOfBungeeObj, float p_springConstant, float p_restLength, float p_snapLength);
   
   ShapeBungee()
@@ -144,6 +159,9 @@ class ShapeBuoyancy: public ForceGenerator
   float waterDensity; //set at standard of pure water - 1000kg per cubic meter
 
 public:
+  ~ShapeBuoyancy(){};
+  ShapeBuoyancy(ShapeBuoyancy const &) = delete; //delete copy constructor
+  
   ShapeBuoyancy(float p_depthForMaxBuoyancyForce, float p_shapeVolume, float p_waterHeight, float p_waterDensity = 1000.0f);
   //virtual void printForceGenType() { std::cout << "ForceGen type : buoyancy\n"; }
   virtual void updateForce(ShapeBody* shape, float duration);
@@ -193,6 +211,11 @@ class BlobForceGenerator : public ForceGenerator
    * there is no force.
    */
   float  maxDistance;
+
+public:
+
+  ~BlobForceGenerator(){};
+
 
   virtual void updateForce(
       ShapeBody *particle,

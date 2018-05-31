@@ -1,14 +1,27 @@
 #include "ElasticMeshDemo.h"
 
-//default constructor called first time scene is opened
-ElasticMeshDemo::ElasticMeshDemo()
+/**
+   ElasticMeshDemo README
+   
+   The mesh is designed to rip apart through the middle as the rods (drawn in red)  at either end move
+   in opposing directions. As the rods do not deform, they will continue moving whilst the elastic
+   cables (drawn in black) holding the nodes together stretch and snap.
+
+   Following Hook's Law, spring force is used to replicate the properties of elastic, defining the
+   stiffness (spring constant) of each connection in the mesh, the length at which a spring will
+   contact back together, and the length whereby it has stretched too far and will snap.
+ **/
+
+
+//default constructor
+ElasticMeshDemo::ElasticMeshDemo(int p_numOfMeshNodes)
     :
-    simulation (
-        //number of contacts handled per frame = number of nodes + number of rods
-        meshNodesCount +
-        //-1 for height needs ones less connection, and -1 for the one connector that is a cable not a rod
+    simulation ( //number of contacts handled per frame = number of nodes + number of rods
+        p_numOfMeshNodes +
+        //-1 as height needs ones less connection, and -1 for the one connector that is a cable not a rod
         sqrt(meshNodesCount) - 1 -1
-           )
+                ),
+    drawMeshNodes(false)
 {
   setupDemo();
 }
@@ -81,17 +94,14 @@ void ElasticMeshDemo::setupDemo(int p_numOfMeshNodes)
   //cablesCount = (meshHeight * ((2*meshHeight) +2)) * 2;
   //and remove the rods that will be the mesh
   //cablesCount -= rodsCount * 2;
-
-  /*
-  std::cout << "meshNodesCount: " << meshNodesCount << "\n";
-  std::cout << "cablesCount: " << cablesCount << "\n";
-  std::cout << "rodsCount: " << rodsCount << "\n";
-  */
+  
   
   //create array of nodes
   meshNodes = new Circle[meshNodesCount];
   //place nodes in correct positions
   placeNodes();
+  //set nodes to draw by default
+  //drawMeshNodes = false;
 
   //create array of rods
   rods = new ShapeRod[rodsCount];
@@ -103,16 +113,14 @@ void ElasticMeshDemo::setupDemo(int p_numOfMeshNodes)
   connectNodesWithCables();
 }
 
+/*
 ElasticMeshDemo::~ElasticMeshDemo()
-{
-  cableRegistry.clear();
-  delete[] meshNodes;
-  delete[] rods;
-}
-
+{ }
+*/
 
 void ElasticMeshDemo::draw()
 {
+  
   //draw cables in black
   for (size_t i = 0; i < cableRegistry.registrations.size(); i++)
   {
@@ -127,6 +135,7 @@ void ElasticMeshDemo::draw()
                      b->endOfSpringObj->getPositionY(),
                      0,0,0,255);
   }
+  
   
   //draw rods in red (drawn with 3px thick line)
   for (size_t i = 0; i < rodsCount; i++)
@@ -151,32 +160,18 @@ void ElasticMeshDemo::draw()
                255,0,0,255);
   }
   
-  //draw meshNodes using their base class draw() method
-  for (size_t i = 0 ; i < meshNodesCount ; i++)
-  {
-    meshNodes[i].draw();
-  }
-}
-
-void ElasticMeshDemo::checkForSnappedCables()
-{
-  //for each cable in the cableRegistry
-  for (size_t i = 0; i < cableRegistry.registrations.size(); i++)
-  {
-    //get the springForce from the forceGenerator
-    ForceGenerator* a = cableRegistry.registrations[i].fg;
-    ShapeSpring* b = static_cast<ShapeSpring*>(a);
-
-    //check if the cable has snapped
-    if (b->getSnapped() == true)
+  if (drawMeshNodes) {
+    //draw meshNodes using their base class draw() method
+    for (size_t i = 0 ; i < meshNodesCount ; i++)
     {
-      cableRegistry.remove(a); 
+      meshNodes[i].draw();
     }
   }
 }
 
 void ElasticMeshDemo::update()
 {
+  
   //remove accumu forces from previous frame for each node
   simulation.startFrame();
 
@@ -196,46 +191,55 @@ void ElasticMeshDemo::update()
     meshNodes[i].update();
   }
       
-  //run simulation
+  //run simulation - apply forces from collsions
   simulation.runPhysics(duration);
 }
 
 
 void ElasticMeshDemo::clean()
 {
-  
+  if (cableRegistry.registrations.size() > 0) cableRegistry.clear();
+  if (meshNodes) delete[] meshNodes;
+  if (rods) delete[] rods; 
 }
-
 
 void ElasticMeshDemo::reset()
 {
-  cableRegistry.clear(); //remove all added forces
-  placeNodes(); //reset the position and forces applied to the nodes
-  connectNodesWithRods();
-  connectNodesWithCables(); //and reset the cable links between the nodes
+  if (cableRegistry.registrations.size() > 0) cableRegistry.clear(); //remove all added forces
+
+  setupDemo(meshNodesCount);
 }
 
 //through a key press the meshNodesCount can be selected, and the simulation restarted
 void ElasticMeshDemo::handleInput()
 {
-if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_Q))
+  if (TheInputHandler::Instance()->keyNPressed)
   {
-    cableRegistry.clear();
+    TheInputHandler::Instance()->keyNPressed = false;
+    drawMeshNodes = !drawMeshNodes; 
+  }
+  else if (TheInputHandler::Instance()->keyQPressed)
+  {
+    TheInputHandler::Instance()->keyQPressed = false;
+    if (cableRegistry.registrations.size() > 0) cableRegistry.clear();
     setupDemo(16);
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_W))
+  else if (TheInputHandler::Instance()->keyWPressed)
   {
-    cableRegistry.clear();
+    TheInputHandler::Instance()->keyWPressed = false;
+    if (cableRegistry.registrations.size() > 0) cableRegistry.clear();
     setupDemo(36);
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_E))
+  else if (TheInputHandler::Instance()->keyEPressed)
   {
-    cableRegistry.clear();
+    TheInputHandler::Instance()->keyEPressed = false;
+    if (cableRegistry.registrations.size() > 0) cableRegistry.clear();
     setupDemo(64);
   }
-  else if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_R))
+  else if (TheInputHandler::Instance()->keyRPressed)
   {
-    cableRegistry.clear();
+    TheInputHandler::Instance()->keyRPressed = false;
+    if (cableRegistry.registrations.size() > 0) cableRegistry.clear();
     setupDemo(144);
   }
 }
@@ -377,6 +381,23 @@ void ElasticMeshDemo::connectNodesWithCables()
   }
 }
 
+
+void ElasticMeshDemo::checkForSnappedCables()
+{
+  //for each cable in the cableRegistry
+  for (size_t i = 0; i < cableRegistry.registrations.size(); i++)
+  {
+    //get the springForce from the forceGenerator
+    ForceGenerator* a = cableRegistry.registrations[i].fg;
+    ShapeSpring* b = static_cast<ShapeSpring*>(a);
+
+    //check if the cable has snapped
+    if (b->getSnapped() == true)
+    {
+      cableRegistry.remove(a); 
+    }
+  }
+}
 
 
 
