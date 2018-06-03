@@ -11,9 +11,9 @@ COMPILER_FLAGS = -w
 #LINKER_FLAGS specifies the libraries we're linking against 
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_gfx
 
-#OBJ_NAME specifies the name of our exectuable
-
+#OBJ_NAME specifies the name of our executable
+OBJ_NAME = Physics2D
 
 #This is the target that compiles our executable
 all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)

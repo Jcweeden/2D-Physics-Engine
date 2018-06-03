@@ -3,11 +3,14 @@
 
 void ForceRegistry::updateForces(float duration)
 {
+  //std::cout << registrations.size() << "\n";
   //for each force in the registry, apply it
   for (size_t i = 0; i < registrations.size(); i++)
   {
+    //std::cout << i << registrations[i].shape->getPositionX() <<"\n";
     //registrations[i].fg->printForceGenType();
     //std::cout << (i+1) << " / "  << registrations.size() << " : checkingForces" << " " << registrations[i].shape->getPositionX() << " " << registrations[i].shape->getPositionY() << "\n";
+    
     registrations[i].fg->updateForce(registrations[i].shape, duration);
   }
   //std::cout << "\n";
@@ -37,6 +40,20 @@ void ForceRegistry::remove(ShapeBody* shape, ForceGenerator *fg)
         //std::cout << "ForceRegistry::remove() - Erased\n";
         return;
       }
+    }
+  } 
+}
+
+//removes pair of shape and forceGen from registry should they exist, given just the shape to search with
+void ForceRegistry::remove(ShapeBody* shape)
+{
+  for (size_t i = 0; i < registrations.size(); i++)
+  {
+    if (registrations[i].shape == shape)
+    {
+      registrations.erase(registrations.begin()+i);
+      //std::cout << "ForceRegistry::remove() - Erased\n";
+      return;
     }
   } 
 }
@@ -206,7 +223,7 @@ void ShapeBungee::updateForce(ShapeBody* shape, float duration)
   //else the bungee has exceeded its max length, and has snapped
   else
   {
-    std::cout << "snap - length: " << length << " lenBeforeSnapping: " << snapLength << "\n";
+    //std::cout << "snap - length: " << length << " lenBeforeSnapping: " << snapLength << "\n";
     setSnapped(true);
     //delete pointer
   }

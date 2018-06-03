@@ -5,6 +5,7 @@
 #include "Demo.h"
 #include <math.h>
 #include <vector>
+#include "ShapeBody.h"
 #include "Vector2D.h"
 #include "Contacts.h"
 #include "InputHandler.h"
@@ -24,12 +25,17 @@ int blobsCount;
 //radius of a blob
 float blobRadius;
 
+//CONVERSION TO VECTOR
+std::vector<ShapeBody*> m_blobs;
+
+
+
 //array holding platforms
 Platform *platforms;
 //number of platforms in platforms array
 int platformsCount;
 
-World world;
+World simulation;
 
 BlobForceGenerator blobForceGenerator;
 
@@ -67,6 +73,9 @@ public:
     //collects keyboard/mouse input and applies appropriate actions
     virtual void handleInput();
 
+    //call to spawn shapes upon button press
+    void spawnShapes();
+    
     //switches water on/off
     void switchWater();
 

@@ -173,7 +173,7 @@ void ElasticMeshDemo::update()
 {
   
   //remove accumu forces from previous frame for each node
-  simulation.startFrame();
+  simulation.clearAccumulatedForces();
 
   //check for snapped cables and remove them
   checkForSnappedCables();
@@ -192,7 +192,7 @@ void ElasticMeshDemo::update()
   }
       
   //run simulation - apply forces from collsions
-  simulation.runPhysics(duration);
+  simulation.applyPhysics(duration);
 }
 
 

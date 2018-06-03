@@ -20,15 +20,14 @@ maxContacts(maxContacts)
 }
 
 
-void World::startFrame()
+void World::clearAccumulatedForces()
 {
-    for (Shapes::iterator p = shapes.begin();
-        p != shapes.end();
-        p++)
-    {
-        // Remove all forces from the accumulator
-        (*p)->clearAccumForces();
-    }
+  for (size_t i = 0; i < shapes.size(); i++)
+  {
+    // Remove all forces from the accumulator
+    shapes[i]->clearAccumForces();
+    
+  }
 }
 
 unsigned World::generateContacts()
@@ -54,17 +53,6 @@ unsigned World::generateContacts()
     // contacts.
     if (limit <= 0) break;
 
-    //TEST
-    //std::cout << "counter: " << counter << "\n";
-    //std::cout << "used: " << used << "\n";
-
-    
-    /*if (counter == BLOB_COUNT)
-    {
-      std::cout << "breaking\n"; 
-      break;
-      }*/
-
     counter++;
   }
 
@@ -75,16 +63,14 @@ unsigned World::generateContacts()
 
 void World::integrate(float duration)
 {
-    for (Shapes::iterator s = shapes.begin();
-        s != shapes.end();
-        s++)
-    {
-        // Remove all forces from the accumulator
-      (*s)->physicsIntegration(/*duration*/);
-    }
+  for (size_t i = 0; i < shapes.size(); i++)
+  {
+    // Remove all forces from the accumulator
+    shapes[i]->physicsIntegration(/*duration*/);
+  }
 }
 
-void World::runPhysics(float duration)
+void World::applyPhysics(float duration)
 {
     // First apply the force generators
   registry.updateForces(duration);
@@ -95,7 +81,6 @@ void World::runPhysics(float duration)
     // Generate contacts
   unsigned usedContacts = generateContacts(); //***
 
-  //WORKs UPT OHERE
   // And process them
   if (usedContacts) 
   {
@@ -104,9 +89,9 @@ void World::runPhysics(float duration)
   }
 }
 
-World::Shapes& World::getShapes()
+std::vector<ShapeBody*>* World::getShapes()
 {
-    return shapes;
+  return &shapes;
 }
 
 World::ContactGenerators& World::getContactGenerators()

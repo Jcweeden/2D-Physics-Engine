@@ -62,9 +62,9 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
    frameTime = 0;
 
-   demo = new AnchorSpringDemo;
+   //demo = new AnchorSpringDemo;
    //demo = new BlobDemo;
-   //demo = new ElasticMeshDemo;
+   demo = new ElasticMeshDemo;
    
    return true;
 }

@@ -2,6 +2,8 @@
 #define _Platform_
 
 #include "Contacts.h"
+#include <vector>
+#include "ShapeBody.h"
 
 //an object defined by two points
 class Platform : public ShapeContactGenerator
@@ -15,6 +17,10 @@ class Platform : public ShapeContactGenerator
   //list of all objects the platform is to check for contacts with
   ShapeBody *shapesToCheckContactsWith;
 
+  //**
+  std::vector<ShapeBody*> shapesToCheckContactsWithVector;
+
+  
   //number of items in the shapesToCheckContactsWith array
   static unsigned numShapesToCheckCollisionsWith;
 
@@ -27,11 +33,11 @@ class Platform : public ShapeContactGenerator
 public:
   
   Platform()
-      : start(0,0), end(0,0), /*numShapesToCheckCollisionsWith(0),*/ restitution(0), shapeRadius(0)
+      : start(0,0), end(0,0), restitution(0), shapeRadius(0)
   {}
 
 Platform(float p_restitution, float p_shapeRadius)
-    : start(0,0), end(0,0), /*numShapesToCheckCollisionsWith(0),*/ restitution(p_restitution), shapeRadius(p_shapeRadius)
+    : start(0,0), end(0,0), restitution(p_restitution), shapeRadius(p_shapeRadius)
   {}
 
   void setRadius(float p_radius) { shapeRadius = p_radius; }

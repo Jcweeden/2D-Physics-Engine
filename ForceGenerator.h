@@ -40,6 +40,7 @@ public:
   void remove(ShapeBody* shape, ForceGenerator *fg);
   
   void remove(ForceGenerator *fg);
+  void remove(ShapeBody* shape);
 
   
   //removes all registrations 

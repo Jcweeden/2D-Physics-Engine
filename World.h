@@ -12,12 +12,13 @@ class ShapeContact;
 class World {
 
 public:
-  typedef std::vector<ShapeBody*> Shapes;
+  //typedef std::vector<ShapeBody*> Shapes;
   typedef std::vector<ShapeContactGenerator*> ContactGenerators;
 
 protected:
 
-  Shapes shapes;
+  //Shapes shapes;
+  std::vector<ShapeBody*> shapes;
 
   //true if world will calculate the number of iterations to give to contactResolver each frame
   bool calculateIterations;
@@ -54,14 +55,14 @@ public:
   void integrate(float duration);
 
   //processes all physics for the World
-  void runPhysics(float duration);
+  void applyPhysics(float duration);
 
   //run at start of each frame - clears all forces added to every shape//shapes all have forces added ready for force accumulation
-  void startFrame();
+  void clearAccumulatedForces();
 
   //Getters
   
-  Shapes& getShapes();
+  std::vector<ShapeBody*>* getShapes();
 
   ContactGenerators& getContactGenerators();
 
@@ -69,57 +70,3 @@ public:
 };
 
 #endif
-
-
-  /*
-public:
-  typedef std::vector<ShapeBody*> Shapes; //
-  typedef std::vector<ParticleContactGenerator*> ContactGenerators; //
-
-
-  //holds one shape and pointer to the next in the linked list of shapes
-  //struct ShapeRegistration
-  //{
-  // ShapeBody *shape;
-  // ShapeRegistration *next;
-  //};
-
-  
-  //ShapeRegistration* firstShape;
-public: //members
-
-  ForceRegistry registry;
-
-  ShapeContactResolver resolver;
-
-  //holds a single contact register and a link to the next
-  struct ContactGenRegistration
-  {
-    ShapeContactGenerator *gen;
-    ContactGenRegistration *next;
-  };
-
-  //hold first in linked list of contact generators
-  ContactGenRegistration * firstContactGenRegistration;
-
-  ShapeContact *contacts;
-
-  unsigned maxContacts;
-
-  bool calculateIterations;
-  
-public: //methods
-
-  World(unsigned p_maxContacts, unsigned p_iterations=0);
-
-  void startFrame();
-
-
-  unsigned generateContacts();
-
-  void integrate(float duration);
-
-  void runPhysics(float duration);
-
-  */
-

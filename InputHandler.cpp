@@ -34,6 +34,11 @@ void InputHandler::update()
   isMouseButtonPressed = false;
   //isMouseButtonReleased = false;
   
+  for (size_t i = 0; i < 3; i++)
+  {
+    m_mouseButtonStates[i] = false;
+  }
+  
   SDL_Event event;
 
   while(SDL_PollEvent(&event))
@@ -52,17 +57,17 @@ void InputHandler::update()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        //m_mouseButtonStates[LEFT] = true;
+        m_mouseButtonStates[LEFT] = true;
         isMouseButtonPressed = true;
       }
       /*if (event.button.button == SDL_BUTTON_MIDDLE)
       {
         m_mouseButtonStates[MIDDLE] = true;
-      }
+      }*/
       if (event.button.button == SDL_BUTTON_RIGHT)
       {
         m_mouseButtonStates[RIGHT] = true;
-        } */
+        }
     }
     if (event.type == SDL_MOUSEBUTTONUP)
     {
