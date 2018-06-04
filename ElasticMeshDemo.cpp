@@ -21,7 +21,7 @@ ElasticMeshDemo::ElasticMeshDemo(int p_numOfMeshNodes)
         //-1 as height needs ones less connection, and -1 for the one connector that is a cable not a rod
         sqrt(meshNodesCount) - 1 -1
                 ),
-    drawMeshNodes(false)
+    drawMeshNodes(true)
 {
   setupDemo();
 }

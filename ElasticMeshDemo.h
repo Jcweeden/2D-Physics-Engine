@@ -99,7 +99,7 @@ private:
 
 public:
     ElasticMeshDemo(int p_numOfMeshNodes = 36); //constr
-    ~ElasticMeshDemo() {std::cout << "destroyed Elastic\n"; } //destr
+    ~ElasticMeshDemo() {} //destr
 
     //draws the nodes and cables on screen
     virtual void draw();
@@ -116,12 +116,13 @@ public:
     //collects keyboard/mouse input and applies appropriate actions
     virtual void handleInput();
 
+    //if any cables have snapped under the forces applied to them they are removed in this method
     void checkForSnappedCables();
     
 private:
 
     //sets up the demo according to how many nodes have been assigned to meshNodesCount in the constructor
-    void setupDemo(int p_numOfMeshNodes = 36);
+    void setupDemo(int p_numOfMeshNodes = 64);
     
     //calculates and places nodes in position to form a mesh
     //returns distanceBetweenNodes, the distance between each node, and is used in connectNodesWithCables to

@@ -4,7 +4,7 @@
 
 
 //DEMOS
-#include "BlobDemo.h"
+#include "BuoyancyDemo.h"
 #include "AnchorSpringDemo.h"
 #include "ElasticMeshDemo.h"
 
@@ -63,8 +63,8 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
    frameTime = 0;
 
    //demo = new AnchorSpringDemo;
-   //demo = new BlobDemo;
-   demo = new ElasticMeshDemo;
+   demo = new BuoyancyDemo;
+   //demo = new ElasticMeshDemo;
    
    return true;
 }
@@ -135,7 +135,7 @@ void Game::handleEvents()
     demo->clean();
     delete demo;
 
-    demo = new BlobDemo;
+    demo = new BuoyancyDemo;
   }
   else if (TheInputHandler::Instance()->key3Pressed)
   {

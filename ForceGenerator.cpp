@@ -3,17 +3,11 @@
 
 void ForceRegistry::updateForces(float duration)
 {
-  //std::cout << registrations.size() << "\n";
   //for each force in the registry, apply it
   for (size_t i = 0; i < registrations.size(); i++)
   {
-    //std::cout << i << registrations[i].shape->getPositionX() <<"\n";
-    //registrations[i].fg->printForceGenType();
-    //std::cout << (i+1) << " / "  << registrations.size() << " : checkingForces" << " " << registrations[i].shape->getPositionX() << " " << registrations[i].shape->getPositionY() << "\n";
-    
     registrations[i].fg->updateForce(registrations[i].shape, duration);
   }
-  //std::cout << "\n";
 }
 
 void ForceRegistry::add(ShapeBody* shape, ForceGenerator *fg)
@@ -238,12 +232,12 @@ ShapeBuoyancy::ShapeBuoyancy(float p_depthForMaxBuoyancyForce, float p_shapeVolu
 void ShapeBuoyancy::updateForce(ShapeBody* shape, float duration)
 {
   float shapeDepth = shape->getPositionY();
-  // std::cout << "shapeDepth: " << shapeDepth << "waterHeight: " << waterHeight << "\n";
+  // std::cout << "ShapeBuoy.updateForce(): shapeDepth: " << shapeDepth << "waterHeight: " << waterHeight << "\n";
 
   //if out of the water return (- maxBuoy as coords are at top of obj, so when at depth would be fully submerged)
   if (shapeDepth <= waterHeight - depthForMaxBuoyancyForce)
   {
-    //std::cout << "out of water\n";
+    std::cout << "out of water\n";
     return;
   }
   
@@ -252,9 +246,9 @@ void ShapeBuoyancy::updateForce(ShapeBody* shape, float duration)
   //FULLY SUBMERGED
   if (shapeDepth >= waterHeight)
   {
-    //std::cout << "Fully submerged\n";
     force.setY(-(waterDensity * shapeVolume)); //set the force to it's max (full volume of shape * water density)
     shape->addForce(force);
+    //std::cout << "ShapeBuoy.updateForce(): Fully submerged, adding force: " << force.getX() << ", " << force.getY() << "\n";
     return;
   }
 
@@ -264,8 +258,12 @@ void ShapeBuoyancy::updateForce(ShapeBody* shape, float duration)
   float percentageInWater = depthInWater / depthForMaxBuoyancyForce; //percentage of object in the water
   float volumeInWater = percentageInWater * shapeVolume; //value of volume that is in water
   float forceY = volumeInWater * waterDensity;
-    
+
+  //std::cout << "ShapeBuoy.updateForce(): Partially submerged, adding forceY: " << -forceY << "\n";
+
   force.setY(-forceY);
+
+  shape->addForce(force);
 }
 
 

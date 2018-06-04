@@ -50,6 +50,8 @@ public:
   virtual float getMass() { return ((float)1.0f)/inverseMass; }
   virtual bool hasFiniteMass() { return inverseMass >= 0.0f; }
 
+
+  void setColour(int r, int g, int b, int a) {colourR = r; colourG = g, colourB = b, colourA = a; }
   
   void addForce(const Vector2D &force);
 
@@ -86,7 +88,7 @@ protected:
 
   float rotationalVelocity;
   
-
+public:
   Uint32 colourR, colourG, colourB, colourA;
 };
 

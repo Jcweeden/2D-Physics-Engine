@@ -9,8 +9,8 @@ unsigned Platform::addContact(ShapeContact *contact, unsigned limit)
 
   unsigned used = 0;
 
-  std::cout << "shapesToCheckContactsWithVector.size(): " <<
-      shapesToCheckContactsWithVector.size() << "\n";
+  //std::cout << "shapesToCheckContactsWithVector.size(): " <<
+  //shapesToCheckContactsWithVector.size() << "\n";
   
   for (unsigned i = 0; i < shapesToCheckContactsWithVector.size(); i++) //FIX ME - BLOB_COUNT
   {

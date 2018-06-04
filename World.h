@@ -62,8 +62,10 @@ public:
 
   //Getters
   
-  std::vector<ShapeBody*>* getShapes();
+  std::vector<ShapeBody*> getShapes();
 
+  void setShapes (std::vector<ShapeBody*> p_shapes);
+  
   ContactGenerators& getContactGenerators();
 
   ForceRegistry& getForceRegistry();

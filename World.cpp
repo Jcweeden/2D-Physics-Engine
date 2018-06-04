@@ -12,8 +12,6 @@ maxContacts(maxContacts)
   calculateIterations = (iterations == 0);
 
 }
-
-
   World::~World()
 {
     delete[] contacts;
@@ -22,18 +20,18 @@ maxContacts(maxContacts)
 
 void World::clearAccumulatedForces()
 {
+
+  //std::cout << "shapes.size(): " << shapes.size() << "\n";
   for (size_t i = 0; i < shapes.size(); i++)
   {
-    // Remove all forces from the accumulator
+    //for each object remove all forces added in last frame from the accumulator
     shapes[i]->clearAccumForces();
-    
   }
 }
 
 unsigned World::generateContacts()
 {
   //max num of contacts that can be added //val will be decremented as contacts are added
-
   unsigned limit = maxContacts;
   ShapeContact *nextContact = contacts;
 
@@ -63,35 +61,40 @@ unsigned World::generateContacts()
 
 void World::integrate(float duration)
 {
+  //std::cout << "World::integrate().shapes.size: "<< shapes.size() << "\n";
   for (size_t i = 0; i < shapes.size(); i++)
   {
-    // Remove all forces from the accumulator
     shapes[i]->physicsIntegration(/*duration*/);
   }
 }
 
 void World::applyPhysics(float duration)
 {
-    // First apply the force generators
+  // First apply the force generators
   registry.updateForces(duration);
 
-    // Then integrate the objects
-  integrate(duration); //***
+  // Then integrate the objects
+  integrate(duration);
 
-    // Generate contacts
+  // Generate contacts
   unsigned usedContacts = generateContacts(); //***
 
   // And process them
   if (usedContacts) 
   {
-   if (calculateIterations) resolver.setMaxIterations(usedContacts * 2);
-   resolver.resolveContacts(contacts, usedContacts, duration);
+    if (calculateIterations) resolver.setMaxIterations(usedContacts * 2);
+    resolver.resolveContacts(contacts, usedContacts, duration);
   }
 }
 
-std::vector<ShapeBody*>* World::getShapes()
+std::vector<ShapeBody*> World::getShapes()
 {
-  return &shapes;
+  return shapes;
+}
+
+void World::setShapes (std::vector<ShapeBody*> p_shapes)
+{
+  shapes = p_shapes;
 }
 
 World::ContactGenerators& World::getContactGenerators()
