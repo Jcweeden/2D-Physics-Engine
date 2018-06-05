@@ -9,18 +9,13 @@
 class Platform : public ShapeContactGenerator
 {
  public:
-
   //start and end coords of the platform
   Vector2D start;
   Vector2D end;
 
   //list of all objects the platform is to check for contacts with
-  ShapeBody *shapesToCheckContactsWith;
-
-  //**
   std::vector<ShapeBody*> shapesToCheckContactsWithVector;
 
-  
   //number of items in the shapesToCheckContactsWith array
   static unsigned numShapesToCheckCollisionsWith;
 
@@ -43,7 +38,6 @@ Platform(float p_restitution, float p_shapeRadius)
   void setRadius(float p_radius) { shapeRadius = p_radius; }
   void setRestitution(float p_restitution) { restitution = p_restitution; }
 
-  
   virtual unsigned addContact(ShapeContact *contact, unsigned limit);
 };
 

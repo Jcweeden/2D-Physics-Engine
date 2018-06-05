@@ -3,25 +3,49 @@
 
 World::World(unsigned maxContacts, unsigned iterations)
 :
-resolver(iterations),
-maxContacts(maxContacts)
+    resolver(iterations),    //max number of contacts that will be resolved by ShapeContactResolver per frame
+    maxContacts(maxContacts) //max number of contacts that will collected from generateContacts() per frame
 {
-  //contacts = new std::vector<ShapeContact> arr(maxContacts);
+
+  //set the contacts array to be of size defined by the parameter (max number of contacts)
   contacts = new ShapeContact[maxContacts];
 
-  calculateIterations = (iterations == 0);
-
+  //if a maximum number of contacts to check each frame has been set, then set maxIterationsOfResolverSet to true
+  if (iterations == 0) { maxIterationsOfResolverSet = true; }
+  else { maxIterationsOfResolverSet = false; }
 }
-  World::~World()
+
+World::~World()
 {
-    delete[] contacts;
+  delete[] contacts;
+}
+
+void World::applyPhysics(float duration)
+{
+  //apply the force generators to the shapes
+  registry.updateForces(duration);
+
+  //integrate to update and the velocity and position of each shape
+  integrate(duration);
+
+  //check if there are any contacts betweent the newly positioned shapes
+  unsigned usedContacts = generateContacts();
+
+  //if there are contacts
+  if (usedContacts) 
+  {
+    //if a max number of contacts to deal with each frame has been set, then set this maximum
+    if (maxIterationsOfResolverSet) resolver.setMaxIterations(usedContacts * 2);
+
+    //resolve the contacts
+    resolver.resolveContacts(contacts, usedContacts, duration);
+  }
 }
 
 
+//run at start of each frame - clears all forces added each obj in shapes, ready for new forces in this frame
 void World::clearAccumulatedForces()
 {
-
-  //std::cout << "shapes.size(): " << shapes.size() << "\n";
   for (size_t i = 0; i < shapes.size(); i++)
   {
     //for each object remove all forces added in last frame from the accumulator
@@ -29,15 +53,26 @@ void World::clearAccumulatedForces()
   }
 }
 
+
+//applies physics to all objs in World
+void World::integrate(float duration)
+{
+  for (size_t i = 0; i < shapes.size(); i++)
+  {
+    shapes[i]->physicsIntegration();
+  }
+}
+
+
 unsigned World::generateContacts()
 {
-  //max num of contacts that can be added //val will be decremented as contacts are added
+  //initially set limit as the max num of contacts that can be added
+  //this value will be decremented for each contact added
   unsigned limit = maxContacts;
+
+  //get the first contact from contacts
   ShapeContact *nextContact = contacts;
 
-  int counter = 0;
-  
-  //WORKS FOR AMOUNT IN LIST
   for (ContactGenerators::iterator g = contactGenerators.begin();
        g != contactGenerators.end();
        g++)
@@ -47,45 +82,18 @@ unsigned World::generateContacts()
     limit -= used;
     nextContact += used;
 
-    // We've run out of contacts to fill. This means we're missing
-    // contacts.
+    //if have reached the max number of contacts that can be processed in a frame then break
+    //some contacts will not be processed
     if (limit <= 0) break;
-
-    counter++;
   }
 
-  // Return the number of contacts used.
+  //return number of contacts found, if above 0 then resolveContacts() will be run
   return maxContacts - limit; 
 }
 
 
-void World::integrate(float duration)
-{
-  //std::cout << "World::integrate().shapes.size: "<< shapes.size() << "\n";
-  for (size_t i = 0; i < shapes.size(); i++)
-  {
-    shapes[i]->physicsIntegration(/*duration*/);
-  }
-}
 
-void World::applyPhysics(float duration)
-{
-  // First apply the force generators
-  registry.updateForces(duration);
 
-  // Then integrate the objects
-  integrate(duration);
-
-  // Generate contacts
-  unsigned usedContacts = generateContacts(); //***
-
-  // And process them
-  if (usedContacts) 
-  {
-    if (calculateIterations) resolver.setMaxIterations(usedContacts * 2);
-    resolver.resolveContacts(contacts, usedContacts, duration);
-  }
-}
 
 std::vector<ShapeBody*> World::getShapes()
 {
@@ -99,12 +107,12 @@ void World::setShapes (std::vector<ShapeBody*> p_shapes)
 
 World::ContactGenerators& World::getContactGenerators()
 {
-    return contactGenerators;
+  return contactGenerators;
 }
 
 ForceRegistry& World::getForceRegistry()
 {
-    return registry;
+  return registry;
 }
 
 

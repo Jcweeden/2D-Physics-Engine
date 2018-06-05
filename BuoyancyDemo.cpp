@@ -1,8 +1,5 @@
 #include "BuoyancyDemo.h"
 
-#include <vector>
-#include <iostream>
-
 BuoyancyDemo::BuoyancyDemo()
     :
     shapeRadius(6.0f),
@@ -31,20 +28,6 @@ BuoyancyDemo::BuoyancyDemo()
     (short)(winHeight*.66), 
     (short)(winHeight*.66)};
   
-  // Create the force generator
-  /*
-    blobForceGenerator.shapes = blobs;
-    blobForceGenerator.shapesCount = blobsCount;  
-    blobForceGenerator.maxAttraction = 20.0f;
-    blobForceGenerator.maxReplusion = 10.0f;
-    blobForceGenerator.minNaturalDistance = blobRadius*0.75f;
-    blobForceGenerator.maxNaturalDistance = blobRadius*1.5f;
-    blobForceGenerator.maxDistance = blobRadius * 2.5f;
-    blobForceGenerator.maxFloat = 2;
-    blobForceGenerator.floatHead = 8.0f;
-  */
-  
-  
   //create the platforms
   platforms = new Platform[platformsCount];
 
@@ -54,42 +37,23 @@ BuoyancyDemo::BuoyancyDemo()
 
   for (size_t i = 0; i < platformsCount; i++)
   {
+    //set the radius of objects that will be colliding with the platform
     platforms[i].setRadius(shapeRadius);
-    
+
+    //set the bounciness of the platform
     platforms[i].setRestitution(0.35f);
+
+    //set the list of objects that this platform will check for collisions with
+    platforms[0].shapesToCheckContactsWithVector = m_shapes;
+    
+    //add the platform to the list of objects that will check for collisions
     simulation.getContactGenerators().push_back(platforms + i);
   }
 
-  //create shape and add to vector
-  /*
-  for (unsigned i = 0; i < 0; i++)
-  {
-    int randXPos = rand() % 600 + 100;
+  //set static variable that keeps track of number of active shapes in shapes array,
+  //the number of objects that all platforms will check for collisions with
+  platforms[0].numShapesToCheckCollisionsWith = m_shapes.size();
 
-    ShapeBody *shape = new ShapeBody();
-    
-    shape->setPosition(Vector2D(randXPos, -(rand() % 200 + 10)));
-    
-    shape->setVelocity(0,0);
-    shape->setDamping(0.9f);
-    shape->setAcceleration(0.0f, 0.0f); //no gravity
-    shape->setMass(1.0f);
-    shape->clearAccumForces();
-
-    m_shapes.push_back(shape);
-    
-    ShapeBuoyancy* buoyancyForce = new ShapeBuoyancy(shapeRadius, 10, TheGame::Instance()->getWindowHeight()*.66, 1.2f);
-    buoyancyRegistry.add(m_shapes[i], buoyancyForce);
-
-    ShapeGravity* gravityForce = new ShapeGravity(Vector2D (0.0f,5.0f));
-    gravityRegistry.add(m_shapes[m_shapes.size()-1], gravityForce);
-  }
-  simulation.setShapes(m_shapes);
-  */
-
-  //set static variable that keeps track of number of active shapes in shapes array
-  platforms->numShapesToCheckCollisionsWith = m_shapes.size();
-  platforms[0].shapesToCheckContactsWithVector = m_shapes;
 }
 
 
@@ -266,7 +230,6 @@ void BuoyancyDemo::update()
 void BuoyancyDemo::handleInput()
 {
   //MOUSE
-
   //spawn white coloured lighter shapes from left-click
   if (TheInputHandler::Instance()->getMouseButtonState(0))
   {
@@ -297,7 +260,7 @@ void BuoyancyDemo::spawnShapes(float mass, int colour)
   //number of shapes spawned per button press
   int numToSpawn = 5;
 
-  //spawn on mouse button position
+  //spawn new shapes on mouse button position
   for (unsigned i = 0; i < numToSpawn; i++)
   {
     ShapeBody *shape = new ShapeBody();
@@ -332,7 +295,7 @@ void BuoyancyDemo::spawnShapes(float mass, int colour)
   platforms[0].shapesToCheckContactsWithVector = m_shapes;
   
   //update number of shapes platform can collide with simultaneously
-  platforms->numShapesToCheckCollisionsWith = m_shapes.size();
+  platforms[0].numShapesToCheckCollisionsWith = m_shapes.size();
 }
 
 void BuoyancyDemo::switchWater()

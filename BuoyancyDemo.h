@@ -25,7 +25,7 @@ class BuoyancyDemo : public Demo
   //array holding platforms
   Platform *platforms;
   //number of platforms in platforms array
-  int platformsCount;
+  unsigned platformsCount;
 
   //holds all shapes and platforms, and updates shapes from the contacts between them
   World simulation;
