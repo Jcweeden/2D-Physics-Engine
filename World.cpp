@@ -73,21 +73,28 @@ unsigned World::generateContacts()
   //get the first contact from contacts
   ShapeContact *nextContact = contacts;
 
+  //for each contact generator (objects looking for collisions)
   for (ContactGenerators::iterator g = contactGenerators.begin();
        g != contactGenerators.end();
        g++)
   {
-    
+    //ShapeContactGenerator.getContact() - get the the number of contacts found in collision that object
+    //and its set vector of objects to check for collisions with, searching for contacts only up to the
+    //limit of contacts left to be found
     unsigned used =(*g)->addContact(nextContact, limit);
+
+    //deduct from the total number of contacts left to find the number that was just found
     limit -= used;
+
+    //increment to load the next contact generator
     nextContact += used;
 
-    //if have reached the max number of contacts that can be processed in a frame then break
-    //some contacts will not be processed
+    //if have reached the max number of contacts to be processed per frame then break
+    //any further contacts in the frame will not be processed
     if (limit <= 0) break;
   }
 
-  //return number of contacts found, if above 0 then resolveContacts() will be run
+  //return number of contacts found, if above numContacts > 0 then resolveContacts() will be run
   return maxContacts - limit; 
 }
 

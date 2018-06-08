@@ -237,7 +237,7 @@ void ShapeBuoyancy::updateForce(ShapeBody* shape, float duration)
   //if out of the water return (- maxBuoy as coords are at top of obj, so when at depth would be fully submerged)
   if (shapeDepth <= waterHeight - depthForMaxBuoyancyForce)
   {
-    std::cout << "out of water\n";
+    //std::cout << "out of water\n";
     return;
   }
   

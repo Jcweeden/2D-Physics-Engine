@@ -35,9 +35,13 @@ Platform(float p_restitution, float p_shapeRadius)
     : start(0,0), end(0,0), restitution(p_restitution), shapeRadius(p_shapeRadius)
   {}
 
+  //set radius of platform
   void setRadius(float p_radius) { shapeRadius = p_radius; }
+
+  //set bounciness of platform
   void setRestitution(float p_restitution) { restitution = p_restitution; }
 
+  //check for contacts between the platform and shapesToCheckContactsWithVector
   virtual unsigned addContact(ShapeContact *contact, unsigned limit);
 };
 

@@ -4,14 +4,14 @@
 #include "Vector2D.h"
 
 
-/*
-  ShapeContact does not resolve a contact, or apply any forces itself, but is used within the running of
-  ShapeContactResolver.
+/**
+   ShapeContact does not resolve a contact, or apply any forces itself, but is used within the running of
+   ShapeContactResolver.
   
-  ShapeContact holds the two shapes currently colliding (where the shapes are interpenetrating). This collision
-  is resolved by applying an impulse force to separate them, taking into account the mass of each object, and the
-  original velocities they were travelling at.
- */
+   ShapeContact holds the two shapes currently colliding (where the shapes are interpenetrating). This collision
+   is resolved by applying an impulse force to separate them, taking into account the mass of each object, and the
+   original velocities they were travelling at.
+**/
 class ShapeContact {
 
   friend class ShapeContactResolver;
@@ -25,7 +25,6 @@ public:
 
   //copy operator
   ShapeContact& operator=(const ShapeContact& other); //disable copy operator
-
 
   //the shapes involved in the collision (second element can be NULL to represent contact with scenery)
   ShapeBody* shapesInContact[2];
@@ -106,15 +105,18 @@ public:
   void resolveContacts(/*std::vector<ShapeContact*> contactsArray*/ShapeContact *contactsArray, unsigned numContacts, float duration);
 };
 
-
-//each ShapeContactGenerator gets called in turn from the world and can contribute any contacts it finds back to the world
-//using its addContact() method
+/**
+   Objects that will for collisions with themselves will be a child class of ShapeContactGenerator. These child
+   classes will hold a vector of objects to check for collisions with, and look for contacts using their own
+   definition of the addContact() method, which will be defined according to the shape of the object. Each
+   ShapeContactGenerator gets called in turn from the world class in each frame, and will contribute any contacts
+   it finds back to World before resolveContacts() in ContactResolver is called to apply the appropriate forces.
+**/
 class ShapeContactGenerator
 {
 public:
-
-  //fills shapeContact with generated contact
-  //returns number of contacts that have been written
+  //called from World::generateContacts() for each object checking for collisions
+  //fills shapeContact with any found contacts, and returns number of contacts that have been written
   virtual unsigned addContact(ShapeContact* contact, unsigned limit) = 0;
 };
 

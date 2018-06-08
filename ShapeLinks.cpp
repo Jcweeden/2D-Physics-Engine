@@ -36,13 +36,14 @@ unsigned ShapeCable::addContact(ShapeContact *contact, unsigned limit)
 
   //calc normal
   Vector2D normal = linkedShapes[1]->getPosition() - linkedShapes[0]->getPosition();
-  normal.normalise();
+  normal.normalise();  //direction of the rod
   contact->contactNormal = normal;
 
   //length of the penetration 
   contact->penetrationDepth = (length - cableMaxLengthBeforeStretching) * 1.2;
   contact->restitution = restitution;
 
+  //return 1 to show a contact has been found
   return 1;
 }
 
@@ -60,20 +61,24 @@ unsigned ShapeRod::addContact(ShapeContact *contact, unsigned limit)
 
   //calc normal
   Vector2D normal = linkedShapes[1]->getPosition() - linkedShapes[0]->getPosition();
-  normal.normalise();
+  normal.normalise(); //direction of the rod
 
+  //if over-stretched
   if (currLength > rodLength)
   {
     contact->contactNormal = normal;
-    contact->penetrationDepth = currLength-rodLength; //calc difference in size 
-  } else
+    contact->penetrationDepth = currLength-rodLength; //calc difference in size, by long the rod is extended
+  }
+  else //under-stretched
   {
-    contact->contactNormal = normal * -1;
-    contact->penetrationDepth = rodLength - currLength;
+    //pass in normal in oposite direction, so is extended not shrunk by addition of force
+    contact->contactNormal = normal * -1; 
+    contact->penetrationDepth = rodLength - currLength; //calc difference in size, by long the rod has shrunk
   }
   
   //always use 0 rest for a rod, it does not bounce
   contact->restitution = 0;
 
+  //return 1 to show a contact has been found
   return 1;
 }

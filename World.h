@@ -30,7 +30,10 @@ class ShapeContact;
 class World {
 
 public:
-  //typedef std::vector<ShapeBody*> Shapes;
+  //a list of all of all objects that will generate contacts, e.g. objects which can be collided with
+  //each of thse objects will have objects assigned to a vector (shapesToCheckContactsWithVector) that
+  //dictates the objects they are checking for contacts with
+  
   typedef std::vector<ShapeContactGenerator*> ContactGenerators;
 
 protected:
@@ -48,7 +51,7 @@ protected:
   //are resolved
   ShapeContactResolver resolver;
 
-  //list of ShapeContactGenerators
+  //vector of ShapeContactGenerators
   ContactGenerators contactGenerators;
   //std::vector<ShapeContactGenerator*> contactGenerators;
 
