@@ -1,7 +1,5 @@
 #include "ShapeLinks.h"
 
-
-
 float ShapeLink::currentLength() const
 {
   Vector2D relativePosition = linkedShapes[0]->getPosition() - linkedShapes[1]->getPosition();

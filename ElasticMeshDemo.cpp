@@ -42,7 +42,7 @@ void ElasticMeshDemo::setupDemo(int p_numOfMeshNodes)
       
       cableSpringConstant = 0.2f;
       cableRestLengthMultipler = 1.0f;
-      cableSnapLengthMultipler = 2.5f;
+      cableSnapLengthMultipler = 3.2f;
       break;
     
     case 36:
@@ -52,9 +52,9 @@ void ElasticMeshDemo::setupDemo(int p_numOfMeshNodes)
       nodeDamping = 0.75f;
       nodeRadius = 4;
       
-      cableSpringConstant = 0.2f;
+      cableSpringConstant = 0.25f;
       cableRestLengthMultipler = 1.0f;
-      cableSnapLengthMultipler = 3.8f;
+      cableSnapLengthMultipler = 4.8f;
       break;
     
     case 64:

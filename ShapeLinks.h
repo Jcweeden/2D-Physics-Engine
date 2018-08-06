@@ -53,6 +53,7 @@ public:
   bool setSnapped(bool val) {hasSnapped = val;}
 };
 
+
 /**
    Rods are not flexible, and will retain the same length (rodLength) between the start and end points
  **/
