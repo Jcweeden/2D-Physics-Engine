@@ -5,7 +5,7 @@
 
 Game* g_game = 0;
 
-const int FPS = 60; //how many FPS we want to run at
+const int FPS = 30; //how many FPS we want to run at
 const int DELAY_TIME = 1000.0f / FPS;//divided by num of ms in a second, giving time to delay game between loops to keep a constant frame ratex
 Uint32 lastFrame = SDL_GetTicks();
  
@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
 
        frameTime = ( SDL_GetTicks() - frameStart);//how long the frame took to run
 
-       /* if(frameTime < DELAY_TIME)//if time taken to run frame is less than desired
+       if(frameTime < DELAY_TIME)//if time taken to run frame is less than desired
        {
          SDL_Delay((int)(DELAY_TIME - frameTime));//call delay to make wait for time to reach desired FPS
-         }*/
+       }
      }
    }
    else

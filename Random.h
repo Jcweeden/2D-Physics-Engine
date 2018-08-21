@@ -1,6 +1,7 @@
 #ifndef CYCLONE_RANDOM_H
 #define CYCLONE_RANDOM_H
 #include "Vector2D.h"
+#include <time.h>
 
 
 class Random
